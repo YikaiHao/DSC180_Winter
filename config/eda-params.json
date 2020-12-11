@@ -1,0 +1,13 @@
+{
+    "input_paths": [
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/popular-apps.csv",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/random-apps.csv",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/malware.csv"
+    ],
+    "type_lst": ["popular", "random", "malware"],
+    "outdir": "data/report",
+    "eda_dict": {
+        "class_id":"#OfClass",
+        "api_call":"#OfUniqueAPI"
+    }
+}
