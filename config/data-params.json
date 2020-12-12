@@ -6,6 +6,6 @@
         
     ],
     "app_type": ["malware", "random-apps", "popular-apps"],
-    "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/",
-    "sampling_lst": [464, 232, 232]
+    "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/proposal/",
+    "sampling_lst": [200, 100, 100]
 }
