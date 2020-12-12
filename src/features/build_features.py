@@ -74,6 +74,7 @@ class preprocess_csv:
         self.df['block_id'] = cantor_pairing(
             np.vstack((self.df.block_id.values, self.df.class_id.values, self.df.app_id.values))
         )
+
         
         self.df['api_id'] = reset_id(self.df['api_id'])
         self.df['block_id'] = reset_id(self.df['block_id'])
@@ -125,6 +126,7 @@ class matA:
         self.train.loc[:,'app_id'] = reset_id(self.train['app_id'])
         self.train.loc[:, 'block_id'] = reset_id(self.train['block_id'])
         self.train.loc[:, 'package_id'] = reset_id(self.train['package_id'])
+        self.train.loc[:, 'invoke_type'] = reset_id(self.train['invoke_type'])
 
         # delete test api row if test api not in train
         self.test = self.test[self.test['api_id'].isin(self.train['api_id'])]
@@ -181,12 +183,7 @@ class matB():
         data = np.ones((len(row), ))
         row_unique = np.unique(row)
         col_unique = np.unique(col)
-<<<<<<< HEAD
         preB = csc_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique))).astype(bool).astype(int)
-=======
-        preB = csc_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique)))
-        preB = preB.astype(bool).astype(int)
->>>>>>> 6ec58d343b42b4844c8588c89a86b2feca074c1a
         self.X_train = preB.dot(preB.T)
         self.X_train = self.X_train.astype(bool).astype(int)
         
@@ -211,17 +208,37 @@ class matP():
         data = np.ones((len(row), ))
         row_unique = np.unique(row)
         col_unique = np.unique(col)
-<<<<<<< HEAD
         preP = csc_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique))).astype(bool).astype(int)
-=======
-        preP = csc_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique)))
-        preP = preP.astype(bool).astype(int)
->>>>>>> 6ec58d343b42b4844c8588c89a86b2feca074c1a
         self.X_train = preP.dot(preP.T)
         self.X_train = self.X_train.astype(bool).astype(int)
         
     def _save_mat(self): 
         save_npz(f'{self.output}/P_train.npz', self.X_train)
+
+class matI():
+    """
+    Generate matrix I 
+    """
+    def __init__(self, A):
+        self.train = A.train.copy()
+        self.output = A.output
+        #self.X_train
+        self._construct_csr_train_mat()
+        self._save_mat()
+        
+        
+    def _construct_csr_train_mat(self):
+        row = self.train.api_id.values
+        col = self.train.invoke_type.values
+        data = np.ones((len(row), ))
+        row_unique = np.unique(row)
+        col_unique = np.unique(col)
+        preP = csc_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique))).astype(bool).astype(int)
+        self.X_train = preP.dot(preP.T)
+        self.X_train = self.X_train.astype(bool).astype(int)
+        
+    def _save_mat(self): 
+        save_npz(f'{self.output}/I_train.npz', self.X_train)
 
 def build_mat(paths, sample_size, type_lst, output_path, matlst):
     """
@@ -243,3 +260,7 @@ def build_mat(paths, sample_size, type_lst, output_path, matlst):
     if 'P' in matlst:
         matP(A)
     print('P Finished')
+
+    if 'I' in matlst:
+        matI(A)
+    print('I Finished')
