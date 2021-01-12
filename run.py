@@ -6,6 +6,7 @@ sys.path.insert(0, 'src')
 from util import *
 from data.make_dataset import clean_df
 from features.build_features import build_mat
+from features.word2vec import build_w2v
 from models.run_model import run_model 
 from visualization.eda import generate
 
@@ -39,6 +40,10 @@ def main(targets):
     if 'run_model' in targets:
         params = load_params('config/test-params.json')
         run_model(**params)
+
+    if 'word2vec' in targets:
+        params = load_params('config/word2vec.json')
+        build_w2v(**params)
 
     if 'test' in targets:
         params = load_params('config/test/data-params.json')
