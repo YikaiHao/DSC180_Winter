@@ -30,7 +30,7 @@ class Node2Vec():
         self.p = p 
         self.q = q
 
-    def perfom_walk(self):
+    def perform_walk(self):
         sentences = []
         if 'AA' in mat_dict:
             self.A_train = sparse.load_npz(mat_dict['AA']).tocsr()
@@ -63,3 +63,7 @@ class Node2Vec():
             app_list = np.nonzero(A_train[:,orig_api])[0]
             prob_list = [1/self.p if i==orig_app else 1/self.q for i in app_list]
             return np.random.choice(app_list,1,p=prob_list)
+
+def build_n2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_path,p=0.5,q=0.5):
+    node2vec = Node2Vec(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_path,p,q)
+    node2vec.perform_walk()

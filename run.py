@@ -45,6 +45,10 @@ def main(targets):
         params = load_params('config/word2vec.json')
         build_w2v(**params)
 
+    if 'node22vec' in targets:
+        params = load_params('config/node2vec.json')
+        build_n2v(**params)
+
     if 'test' in targets:
         params = load_params('config/test/data-params.json')
         clean_df(**params)

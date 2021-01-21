@@ -4,5 +4,7 @@
     "num_sentences":10,
     "num_tokens":200,
     "vec_size":5,
-    "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/model"
+    "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/model",
+    "p":0.5,
+    "q":0.5
 }
