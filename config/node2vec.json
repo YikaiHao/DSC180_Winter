@@ -1,0 +1,8 @@
+{
+    "label_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/label.json",
+    "mat_dict": {"AA": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/A_train.npz"},
+    "num_sentences":10,
+    "num_tokens":200,
+    "vec_size":5,
+    "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/model"
+}
