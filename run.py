@@ -7,6 +7,7 @@ from util import *
 from data.make_dataset import clean_df
 from features.build_features import build_mat
 from features.word2vec import build_w2v
+from features.node2vec import build_n2v
 from models.run_model import run_model 
 from visualization.eda import generate
 
@@ -45,7 +46,7 @@ def main(targets):
         params = load_params('config/word2vec.json')
         build_w2v(**params)
 
-    if 'node22vec' in targets:
+    if 'node2vec' in targets:
         params = load_params('config/node2vec.json')
         build_n2v(**params)
 

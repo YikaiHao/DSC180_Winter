@@ -1,10 +1,12 @@
 {
     "label_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/label.json",
-    "mat_dict": {"AA": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/A_train.npz"},
-    "num_sentences":10,
-    "num_tokens":200,
-    "vec_size":5,
+    "mat_dict": {"A": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/A_train.npz",
+        "B": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/B_train.npz",
+        "P": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/P_train.npz"},
+    "num_sentences":100,
+    "num_tokens":10,
+    "vec_size":200,
     "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/model",
-    "p":0.5,
-    "q":0.5
+    "p":0.4,
+    "q":0.6
 }
