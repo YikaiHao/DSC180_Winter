@@ -18,7 +18,6 @@ class MyCorpus:
             # assume there's one document per line, tokens separated by whitespace
             yield line.strip().split(' ')
 
-
 class Node2Vec():
     def __init__(self,label_path, mat_dict, num_sentence, num_tokens, vec_size,output_path,p,q):
         self.label_path = label_path
@@ -33,9 +32,6 @@ class Node2Vec():
     def perform_walk(self):
         sentences = []
         self.A_train = sparse.load_npz(self.mat_dict['A']).tocsr()
-        self.B_train = sparse.load_npz(self.mat_dict['B']).tocsr()
-        self.P_train = sparse.load_npz(self.mat_dict['P']).tocsr()
-        self.H_matrix = (self.B_train+self.P_train).astype(bool).astype(int)
         if 'B' not in self.mat_dict:
             for _ in tqdm(range(self.num_sentences)):  
                 sentence_len = np.random.choice(self.num_tokens)
@@ -59,6 +55,9 @@ class Node2Vec():
                 sentence += f'app{end_app}' 
                 sentences.append(sentence)
         else:
+            self.B_train = sparse.load_npz(self.mat_dict['B']).tocsr()
+            self.P_train = sparse.load_npz(self.mat_dict['P']).tocsr()
+            self.H_matrix = (self.B_train+self.P_train).astype(bool).astype(int)
             for _ in tqdm(range(self.num_sentences)):
                 sentence_len = np.random.choice(self.num_tokens)
                 api_row = self.A_train.shape[0]
@@ -69,21 +68,14 @@ class Node2Vec():
                 sentence += f'{prev} {curr} ' 
                 curr_type = 'api'
                 prev_type = 'app'
-                for i in range(sentence_len-1):
+                for i in range(sentence_len):
                     curr_type, prev_type,curr,prev = self.generate_with_probability(curr_type, prev_type,curr,prev)
                     sentence += f'{curr} '
-                if curr_type == 'api':
-                    sentence += 'end'
-                else: 
-                    while curr_type!='app':
-                        curr_type, _place1,_place2,_place3 = self.generate_with_probability(curr_type, prev_type,curr,prev)
-                    sentence += f'{curr}'
+                sentence = sentence[:-1]
                 sentences.append(sentence)
-
-
         corpus = MyCorpus(sentences)
-        model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size)
-        model.save(f'{self.output_path}/node2vec_all_100.model')
+        model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size, min_count=1)
+        model.save(f'{self.output_path}/node2vec_all_5.model')
         print('saved')
     
     def A_only_generate_with_probability(self,orig_app, orig_api,start='app'):
