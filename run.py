@@ -9,6 +9,7 @@ from features.build_features import build_mat
 from features.word2vec import build_w2v
 from features.node2vec import build_n2v
 from models.run_model import run_model 
+from models.clf import run_clf
 from visualization.eda import generate
 
 def load_params(fp):
@@ -49,6 +50,11 @@ def main(targets):
     if 'node2vec' in targets:
         params = load_params('config/node2vec.json')
         build_n2v(**params)
+
+    if 'clf' in targets:
+        params = load_params('config/clf.json')
+        run_clf(**params)
+
 
     if 'test' in targets:
         params = load_params('config/test/data-params.json')
