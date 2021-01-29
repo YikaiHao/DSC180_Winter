@@ -73,7 +73,7 @@ class Node2Vec():
                 sentences.append(sentence)
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size, min_count=1)
-        model.save(f'{self.output_path}/node2vec_concat_50000.model')
+        model.save(f'{self.output_path}/node2vec_all_{self.num_sentences}.model')
         print('saved')
     
     def convert_to_string(self,row_num):

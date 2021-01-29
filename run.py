@@ -8,6 +8,7 @@ from data.make_dataset import clean_df
 from features.build_features import build_mat
 from features.word2vec import build_w2v
 from features.node2vec import build_n2v
+from features.metapath2vec import build_m2v
 from models.run_model import run_model 
 from visualization.eda import generate
 
@@ -49,6 +50,10 @@ def main(targets):
     if 'node2vec' in targets:
         params = load_params('config/node2vec.json')
         build_n2v(**params)
+
+    if 'metapath2vec' in targets:
+        params = load_params('config/metapath2vec.json')
+        build_m2v(**params)
 
     if 'test' in targets:
         params = load_params('config/test/data-params.json')
