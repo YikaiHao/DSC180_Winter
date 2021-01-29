@@ -19,7 +19,7 @@ class MyCorpus:
             yield line.strip().split(' ')
 
 
-def build_w2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, window_size, output_path):
+def build_w2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_path):
     labels = json.load(open(label_path))
 
     # generate word2vec based on AA matrix 
