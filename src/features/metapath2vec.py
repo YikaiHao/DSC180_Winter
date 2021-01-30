@@ -37,9 +37,11 @@ class Metapath2Vec():
         for _ in tqdm(range(self.num_sentences)):
             app_row = self.A_train.shape[0]
             curr_ind = np.random.choice(app_row)
+            sentence_len = np.random.choice(np.arange(len(self.input_path),self.num_tokens))
             sentence = f'app{curr_ind} '
             curr_type = 'app'
-            for path in self.type_path:
+            for i in range(sentence_len):
+                path = self.type_path[i%len(self.type_path)]
                 if path == 'A':
                     if curr_type == 'app':
                         curr_ind = self.generate_step(self.A_train,curr_type,curr_ind)
@@ -59,7 +61,7 @@ class Metapath2Vec():
         
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size,min_count = 1)
-        model.save(f'{self.output_path}/metapath2vec_{self.num_sentences}_{self.input_path}.model')
+        model.save(f'{self.output_path}/metapath2vec_{self.num_sentences}_{self.input_path}_con.model')
     
     def generate_step(self,matrix,curr_type,curr_ind):
         if curr_type == 'app':
