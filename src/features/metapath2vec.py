@@ -33,13 +33,16 @@ class Metapath2Vec():
         self.A_train = sparse.load_npz(self.mat_dict['A']).tocsr()
         self.B_matrix = sparse.load_npz(self.mat_dict['B']).tocsr()
         self.P_matrix = sparse.load_npz(self.mat_dict['P']).tocsr()
-        self.type_path = [i for i in self.input_path]
+        self.type_path = [i for i in self.input_path[1:]]
         for _ in tqdm(range(self.num_sentences)):
             app_row = self.A_train.shape[0]
             curr_ind = np.random.choice(app_row)
-            sentence_len = np.random.choice(np.arange(len(self.input_path),self.num_tokens))
+            max_length = max(len(self.input_path),self.num_tokens)
+            min_length = min(len(self.input_path),self.num_tokens)
+            sentence_len = np.random.choice(np.arange(min_length, max_length+1))
             sentence = f'app{curr_ind} '
-            curr_type = 'app'
+            curr_ind = self.generate_step(self.A_train,'app',curr_ind)
+            curr_type = 'api'
             for i in range(sentence_len):
                 path = self.type_path[i%len(self.type_path)]
                 if path == 'A':
@@ -61,7 +64,7 @@ class Metapath2Vec():
         
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size,min_count = 1)
-        model.save(f'{self.output_path}/metapath2vec_{self.num_sentences}_{self.input_path}_con.model')
+        model.save(f'{self.output_path}/metapath2vec_{self.input_path}_vec{self.vec_size}_tok{self.num_tokens}_sen{self.num_sentences}.model')
     
     def generate_step(self,matrix,curr_type,curr_ind):
         if curr_type == 'app':
