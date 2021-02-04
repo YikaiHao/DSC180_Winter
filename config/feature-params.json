@@ -1,11 +1,11 @@
 {
     "paths":[ 
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/popular-apps.csv",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/random-apps.csv",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/malware.csv"
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/popular_tfidf_1000.csv",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/random_tfidf_1000.csv",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/baseline_unique/malware_tfidf_1000.csv"
     ],
     "sample_size": [100, 100, 200],
     "type_lst": [0, 0, 1], 
-    "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/", 
-    "matlst": ["A","B","P"]
+    "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/reduce_api/", 
+    "matlst": ["A","B","P", "I"]
 }

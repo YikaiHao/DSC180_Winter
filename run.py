@@ -5,6 +5,7 @@ import pandas as pd
 sys.path.insert(0, 'src')
 from util import *
 from data.make_dataset import clean_df
+from data.reduce_api import run_reduce_api
 from features.build_features import build_mat
 from features.word2vec import build_w2v
 from features.node2vec import build_n2v
@@ -30,6 +31,10 @@ def main(targets):
     if 'baseline_df' in targets:
         params = load_params('config/data-params.json')
         clean_df(**params)
+    
+    if 'reduce_api' in targets:
+        params = load_params('config/reduce_api.json')
+        run_reduce_api(**params)
 
     if 'eda' in targets:
         params = load_params('config/eda-params.json')
