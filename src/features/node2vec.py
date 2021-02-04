@@ -33,6 +33,7 @@ class Node2Vec():
         sentences = []
         self.A_train = sparse.load_npz(self.mat_dict['A']).tocsr()
         if 'B' not in self.mat_dict:
+            self.type = 'AA'
             for _ in tqdm(range(self.num_sentences)):  
                 sentence_len = np.random.choice(self.num_tokens)
                 app_row = self.A_train.shape[0]
@@ -55,6 +56,7 @@ class Node2Vec():
                 sentence += f'app{end_app}' 
                 sentences.append(sentence)
         else:
+            self.type = 'ALL'
             self.app_row = self.A_train.shape[0]
             self.matrix = sparse.vstack([self.A_train,(sparse.load_npz(self.mat_dict['B']).tocsr()+sparse.load_npz(self.mat_dict['P']).tocsr())])
             self.matrix = sparse.hstack([sparse.vstack([sparse.csr_matrix((self.app_row,self.app_row), dtype=np.int8),self.A_train.T]),self.matrix]).astype(bool).astype(int).tocsr()
@@ -73,7 +75,7 @@ class Node2Vec():
                 sentences.append(sentence)
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size, min_count=1)
-        model.save(f'{self.output_path}/node2vec_concat_50000.model')
+        model.save(f'{self.output_path}/node2vec_{self.type}_vec{self.vec_size}_tok{self.num_tokens}_sen{self.num_sentences}.model')
         print('saved')
     
     def convert_to_string(self,row_num):

@@ -42,7 +42,7 @@ def build_w2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_
 
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=vec_size)
-        model.save(f'{output_path}/word2vec_AA_{num_sentences}_{num_tokens}_{vec_size}.model')
+        model.save(f'{output_path}/word2vec_AA_vec{vec_size}_tok{num_tokens}_sen{num_sentences}.model')
         
 
 

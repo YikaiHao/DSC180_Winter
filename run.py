@@ -9,6 +9,7 @@ from data.reduce_api import run_reduce_api
 from features.build_features import build_mat
 from features.word2vec import build_w2v
 from features.node2vec import build_n2v
+from features.metapath2vec import build_m2v
 from models.run_model import run_model 
 from models.clf import run_clf
 from visualization.eda import generate
@@ -27,7 +28,6 @@ def main(targets):
     Runs the main project pipeline logic, given the target 
     targets must contain: 'baseline_df' ...
     """
-    eda_config = json.load(open('config/eda-params.json'))
     if 'baseline_df' in targets:
         params = load_params('config/data-params.json')
         clean_df(**params)
@@ -56,6 +56,10 @@ def main(targets):
         params = load_params('config/node2vec.json')
         build_n2v(**params)
 
+    if 'metapath2vec' in targets:
+        params = load_params('config/metapath2vec.json')
+        build_m2v(**params)
+        
     if 'clf' in targets:
         params = load_params('config/clf.json')
         run_clf(**params)
