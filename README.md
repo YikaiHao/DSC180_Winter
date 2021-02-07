@@ -19,3 +19,12 @@ After understanding the data structure of the data source and the exact data sec
 ### Database
 We design a special database to store the data we get. Since the main feature is the api, there are over 2 millions unique apis and more than 50 millions apis appeared in different smali files. Separated csv files and unique ids are used to store the specific unique string values and represent the string value. Then, in the main csv files, we store the unique ids from different references. This will reduce the space and time. The description of our database is appended below.
 ![database](data/report/database_new.png)
+## Model 
+### HinDroid
+HinDroid is the baseline model we use for our report. It contains different types of kernels and the meaning behind each kernel is different. It uses the features we extract from the data generating process to build some matrices. Each matrix shows a type of relationship between apis or applications. By choosing different types of matrices we want to combine together, we get the kernel we have. Then we will be able to use the kernels for malware detection.<br>
+The four types of matrices are: A, B, P, and I matrices. 
+- A matrix shows the connection among apis and applications. The value within the A matrix will be one if the application contains the api.
+- B matrix shows the connection between apis. The value within the B matrix shows whether two apis are contained in the same code block.
+- P matrix also shows the connection between apis. The value within the P matrix shows whether two apis use the same package.
+- I matrix shows the connection within the apis. The value within the I matrix shows whether two apis use the same invoke type.
+Currently, due to the large size of the unique apis we get, we are not able to calculate out the I matrix yet. Therefore, the kernel we have now is $AA^{T}$, ABA^t, APA^t, and APBP^tA^t. 
