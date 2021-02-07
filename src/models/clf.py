@@ -183,8 +183,9 @@ class clf:
         for m in tqdm(clf_dict):
             model = clf_dict[m]
             test_acc = model.score(X_test, self.y_test)
+            train_acc = model.score(X_train, self.y_train)
             test_f1 = f1_score(self.y_test, model.predict(X_test))
-            print(f'Model: {m}    Acc: {test_acc}     F1: {test_f1}')
+            print(f'Model: {m}    Train-Acc:{train_acc}    Test-Acc: {test_acc}     F1: {test_f1}')
 
 def run_clf(model_path, train_path, test_path, label_path, clf_lst, plot_path):
     """
