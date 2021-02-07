@@ -1,2 +1,2 @@
-remote_theme: samarsault/plainwhite-jekyll
+theme: minima
 exclude: [/report]
