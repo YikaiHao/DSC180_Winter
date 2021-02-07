@@ -1,4 +1,4 @@
-# Malware Detection
+Malware Detection
 Authors: [**Yikai Hao**](https://github.com/YikaiHao), [**Yu-Chieh Chen**](https://github.com/yuc399), [**Ruoyu Liu**](https://github.com/rul141)
 
 [Check on GitHub Repo](https://github.com/YikaiHao/DSC180_Winter)
