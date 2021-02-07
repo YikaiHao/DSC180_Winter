@@ -1,6 +1,8 @@
 import json # load json labels 
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
+import seaborn as sns
 from gensim.models import Word2Vec # load word2vec model
 from scipy.sparse import load_npz # load sparse matrix
 
@@ -12,18 +14,20 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import f1_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.manifold import TSNE
 
 
 class clf:
     """
     classifier of embedding features 
     """
-    def __init__(self, model_path, train_path, test_path, label_path, clf_lst):
+    def __init__(self, model_path, train_path, test_path, label_path, clf_lst, plot_path):
         self.model_path = model_path
         self.train_path = train_path
         self.test_path = test_path
         self.label_path = label_path
         self.clf_lst = clf_lst
+        self.plot_path = plot_path
         #self.model
         #self.train_mat
         #self.test_mat
@@ -73,6 +77,49 @@ class clf:
 
         self.y_train = self.labels['y_train']
         self.y_test = self.labels['y_test']
+
+    def _plot_tsne(self):
+        n_row = self.X_train.shape[0] + self.X_test.shape[0]
+        df_dict = {}
+        df_dict['id'] = [f'app{i}' for i in range(n_row)]
+        df_dict['vec'] = np.append(self.X_train, self.X_test)
+
+        # map the label types 
+        labels_lst = np.append(np.where(np.array(self.y_train) == 1, 'train_malware', 'train_benign'),
+                      np.where(np.array(self.y_test) == 1, 'test_malware', 'test_benign'))
+        labels_dict = {k:v for k,v in zip(df_dict['id'], labels_lst)}
+
+        df = pd.DataFrame.from_dict(df_dict)
+        df = df[df.vec.apply(np.sum) != 0]
+        df_dict['id'] = df.id.values.tolist()
+        df_dict['vec'] = df.vec.values.tolist()
+
+        # use tsne change the embedding to 2-dim 
+        tsne = TSNE()
+        X = tsne.fit_transform(df_dict['vec'])
+
+        viz_df = pd.DataFrame()
+        viz_df['id'] = df_dict['id']
+        viz_df['vec1'] = X[:,0]
+        viz_df['vec2'] = X[:,1]
+        viz_df['y'] = [labels_dict[i] for i in viz_df['id']]
+
+        # get the scatter plot 
+        color_dict = {
+            'train_malware': 'pink',
+            'train_benign': 'lightblue', 
+            'test_malware': 'crimson',
+            'test_benign': 'steelblue'
+        }
+        tsne_plt = sns.scatterplot(
+            data=viz_df,
+            x='vec1',
+            y='vec2',
+            hue='y',
+            palette= color_dict,
+        )
+
+        tsne_plt.savefig(self.plot_path)
 
     def choose_model(self, model_name):
         if model_name == 'svm':
@@ -135,12 +182,12 @@ class clf:
             test_f1 = f1_score(self.y_test, model.predict(self.X_test))
             print(f'Model: {m}    Acc: {test_acc}     F1: {test_f1}')
 
-def run_clf(model_path, train_path, test_path, label_path, clf_lst):
+def run_clf(model_path, train_path, test_path, label_path, clf_lst, plot_path):
     """
     Run Classifier 
     """
 
-    clf(model_path, train_path, test_path, label_path, clf_lst)
+    clf(model_path, train_path, test_path, label_path, clf_lst, plot_path)
 
 
 

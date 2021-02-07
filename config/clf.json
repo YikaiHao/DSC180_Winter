@@ -3,5 +3,6 @@
     "train_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/A_train.npz",
     "test_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/A_test.npz",
     "label_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/data/feature/label.json",
-    "clf_lst": ["svm", "rf", "gb"]
+    "clf_lst": ["svm", "rf", "gb"],
+    "plot_path": "data/report/metapath2vec_ABPBA_vec200_tok20_sen50000.png"
 }
