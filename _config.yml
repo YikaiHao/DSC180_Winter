@@ -1,2 +1,2 @@
-theme: plainwhite
+remote_theme: samarsault/plainwhite-jekyll
 exclude: [/report]
