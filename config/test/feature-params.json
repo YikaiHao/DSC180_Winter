@@ -3,8 +3,8 @@
         "test/cleandata/benign.csv",
         "test/cleandata/malware.csv"
     ],
-    "sample_size": [3, 3],
+    "sample_size": [7, 7],
     "type_lst": [0, 1], 
     "output_path": "test/feature", 
-    "matlst": ["A", "B"]
+    "matlst": ["A", "B", "P"]
 }

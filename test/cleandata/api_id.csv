@@ -1,8 +1,4 @@
 ,api_id,api_id_id
-0,<hi>,0
-1,trySetHi,1
-2,get,2
-3,hoooo,3
-4,hooo,4
-5,hee,5
-6,<init>,6
+0,get,0
+1,getWarning,1
+2,printWarning,2

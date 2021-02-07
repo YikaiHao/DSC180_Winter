@@ -72,6 +72,14 @@ def main(targets):
         build_mat(**params)
         params = load_params('config/test/test-params.json')
         run_model(**params)
+        params = load_params('config/test/word2vec.json')
+        build_w2v(**params)
+        params = load_params('config/test/node2vec.json')
+        build_n2v(**params)
+        params = load_params('config/test/metapath2vec.json')
+        build_m2v(**params)
+        params = load_params('config/test/clf.json')
+        run_clf(**params)
    
 
 if __name__ == '__main__':

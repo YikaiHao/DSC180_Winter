@@ -5,5 +5,5 @@
     ],
     "app_type": ["malware", "benign"],
     "output_path": "test/cleandata/",
-    "sampling_lst": [3, 3]
+    "sampling_lst": [12, 9]
 }

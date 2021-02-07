@@ -52,6 +52,8 @@ class preprocess_csv:
             p_df = pd.read_csv(p).iloc[:, 1:]
             
             # random select apps 
+            print(p_df.app_id.unique())
+            print(app_size)
             app_lst = np.random.choice(p_df.app_id.unique(), app_size, replace=False)
             
             # only load random selected apps 

@@ -22,13 +22,14 @@ class clf:
     """
     classifier of embedding features 
     """
-    def __init__(self, model_path, train_path, test_path, label_path, clf_lst, plot_path):
+    def __init__(self, model_path, train_path, test_path, label_path, clf_lst, plot_path, vec_size):
         self.model_path = model_path
         self.train_path = train_path
         self.test_path = test_path
         self.label_path = label_path
         self.clf_lst = clf_lst
         self.plot_path = plot_path
+        self.vec_size = vec_size
         #self.model
         #self.train_mat
         #self.test_mat
@@ -59,32 +60,31 @@ class clf:
         for i in range(api_count):
             if f'api{i}' in self.model.wv.vocab:
                 api_lst.append(self.model.wv[f'api{i}'])
-
             # if api# doesn't appear in the model corpus, then append 0 
             else:
-                api_lst.append(np.zeros(1))
-        self.api_features = api_lst
+                api_lst.append(np.zeros(self.vec_size))
+        self.api_features = np.array(api_lst)
 
     def _load_train_test(self):
     
         # creating X_train with shape(num_training_app, vec_size)
-        train_lst = np.where(self.train_mat.toarray(), self.api_features, 0)
-        self.X_train = np.sum(train_lst, axis=1) / np.hstack(np.sum(self.train_mat, axis=1)).tolist()[0]
+        self.X_train = (self.train_mat.toarray().dot(self.api_features)) / self.train_mat.toarray().sum(axis=1).reshape(-1,1)
+        self.X_train = self.X_train.tolist()
         #self.X_train = [X_train[i].tolist() for i in range(len(X_train))]
 
         # create X_test with shape(num_tesing_app, vec_size)
-        test_lst = np.where(self.test_mat.toarray(), self.api_features, 0)
-        self.X_test = np.sum(test_lst, axis=1) / np.hstack(np.sum(self.test_mat, axis=1)).tolist()[0]
+        self.X_test = (self.test_mat.toarray().dot(self.api_features)) / self.test_mat.toarray().sum(axis=1).reshape(-1,1)
+        self.X_test = self.X_test.tolist()
         #self.X_test = [X_test[i].tolist() for i in range(len(X_test))]
 
         self.y_train = self.labels['y_train']
         self.y_test = self.labels['y_test']
 
     def _plot_tsne(self):
-        n_row = self.X_train.shape[0] + self.X_test.shape[0]
+        n_row = len(self.X_train) + len(self.X_test)
         df_dict = {}
         df_dict['id'] = [f'app{i}' for i in range(n_row)]
-        df_dict['vec'] = np.append(self.X_train, self.X_test)
+        df_dict['vec'] = np.append(self.X_train, self.X_test, axis=0).tolist()
 
         # map the label types 
         labels_lst = np.append(np.where(np.array(self.y_train) == 1, 'train_malware', 'train_benign'),
@@ -175,9 +175,9 @@ class clf:
         # train clf
         for m in tqdm(self.clf_lst):
             model = self.choose_model(m)
-            X_train = [self.X_train[i].tolist() for i in range(len(self.X_train))]
-            X_test = [self.X_test[i].tolist() for i in range(len(self.X_test))]
-            clf_dict[m] = model.fit(X_train, self.y_train) 
+            X_train = [self.X_train[i] for i in range(len(self.X_train))]
+            X_test = [self.X_test[i] for i in range(len(self.X_test))]
+            clf_dict[m] = model.fit(X_train, self.y_train, ) 
 
         # get test score 
         for m in tqdm(clf_dict):
@@ -187,12 +187,12 @@ class clf:
             test_f1 = f1_score(self.y_test, model.predict(X_test))
             print(f'Model: {m}    Train-Acc:{train_acc}    Test-Acc: {test_acc}     F1: {test_f1}')
 
-def run_clf(model_path, train_path, test_path, label_path, clf_lst, plot_path):
+def run_clf(model_path, train_path, test_path, label_path, clf_lst, plot_path, vec_size):
     """
     Run Classifier 
     """
 
-    clf(model_path, train_path, test_path, label_path, clf_lst, plot_path)
+    clf(model_path, train_path, test_path, label_path, clf_lst, plot_path, vec_size)
 
 
 
