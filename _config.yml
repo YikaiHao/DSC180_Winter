@@ -1,2 +1,2 @@
-theme: leap-day
+theme: jekyll-theme-minimal
 exclude: [/report]
