@@ -67,10 +67,29 @@ After different models are built, we choose SVM, Random Forest, and Gradient Boo
 As the tables show below, train accuracy, test accuracy, and F1 score are the values to evaluate the performance of the model. For HinDroid, the AA kernel and the APA kernel have the best performance. And the AA kernel of Word2Vec has the best performance among Word2Vec, Node2Vec, and Metapath2Vec. Overall, the HinDroid model performs better than other models. Therefore, we will continuously make improvements on the HinDroid model to create a stronger model for malware detection.
 
 #### HinDroid
-
 | Metapath | Train_Acc | Test_Acc | F-1 Score | Model |
 |----------|-----------|----------|-----------|-------|
 | AA       | 1.0       | 0.9677   | 0.9655    | SVM   |
 | ABA      | 0.9407    | 0.8602   | 0.8506    | SVM   |
 | APA      | 1.0       | 0.9624   | 0.9770    | SVM   |
 | APBPA    | 0.9218    | 0.8602   | 0.8488    | SVM   |
+
+
+#### Word2Vec
+| Metapath | Train_Acc | Test_Acc | F-1 Score | Model |
+|----------|-----------|----------|-----------|-------|
+| AA       | 0.9969    | 0.95     | 0.9459    | SVM   |
+
+#### Node2Vec: 
+| Metapath | Train_Acc | Test_Acc | F-1 Score | Model             |
+|----------|-----------|----------|-----------|-------------------|
+| AA       | 1.0       | 0.9375   | 0.9333    | Gradient Boosting |
+| All      | 0.9781    | 0.8625   | 0.8608    | Gradient Boosting |
+
+#### Metapath2Vec
+| Metapath | Train_Acc | Test_Acc | F-1 Score | Model         |
+|----------|-----------|----------|-----------|---------------|
+| AA       | 0.997     | 0.925    | 0.927     | SVM           |
+| ABA      | 0.997     | 0.875    | 0.875     | SVM           |
+| APA      | 0.984     | 0.9125   | 0.907     | SVM           |
+| ABPBA    | 0.9563    | 0.8625   | 0.8608    | Random Forest |
