@@ -273,7 +273,7 @@ Using the same dataset where training set contains 742 apps and testing set cont
             
     - run_model.py
     
-        - `model(class)`: generate SVM model and record result of $AA^{T}$, $ABA^{T}$, $APA^{T}$, and  $APBP^{T}A^{T}$ kernels
+        - `model(class)`: generate SVM model and record result of AA, ABA, APA, and  APBPA kernels
            - `_load_matrix(function)`: It is a function that load the npz files and save it in the class
            - `_load_y(function)`: It is a function that loads the label of the apps 
            - `_kernel_func(function)`: It is a function that returns the kernel function for a specific metapath 
