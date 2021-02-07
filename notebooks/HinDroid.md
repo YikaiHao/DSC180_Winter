@@ -15,12 +15,12 @@ The original dataset comes from Android Malware Dataset (AMD), which is a datase
 ## Smali File
 To analyze code in the Smali file, we need to understand the structure of it. The following code is a sample Smali file from Microsoft Word app.
 
-![smali](data/report/smali.png)
+![smali](../data/report/smali.png)
 
 ## API Call
 To understand the key features of malware, we focus on the API (Application Programming Interface) calls in the Smali files. The following is an example of the API call which has four main components.
 
-![API_Explain](data/report/API_explain.png)
+![API_Explain](../data/report/API_explain.png)
 
 ## Data Generat Processing 
 We have a source which divides applications into three categories - popular apps, random apps, and malware. We extract features from the source which appropriately represent the data. The invoke method, api name, the method, and the return type fully represent most of the features in an API. In addition, we also saved the names of the APIs, the block numbers, which shows whether the APIs are in the same code block, and the types of the app. Therefore, we can find some relationships among APIs from those data. These data can help us to determine the relationship between different apps. Also, it helps us to construct the A, B, and P matrix to conclude apps contain the suspicious api calls to be malware. We format a .py file which is written in Python to get the values we want. (additional information about .py files in Appendix) In order to reduce the space we take up and the run time, we also make some optimizations on code.
@@ -30,7 +30,7 @@ By using the type of the app as the label in future models, we will be able to f
 ## Database 
 We design a special database to store the data we get. Since our main feature is the api, there are over 2 millions unique apis and more than 50 millions apis appeared in different smali files. In order to save space and time, we use separate csv files to store different unique string values. Instead of using string, we assign an unique id to each string to represent the string value. Then, in the main csv files, we store the unique ids from different references. This will reduce the space and time. The description of our database is appended below.
 
-![database](data/report/database.png)
+![database](../data/report/database.png)
 
 ## Data Statistics 
 
@@ -65,14 +65,14 @@ The baseline model includes the following features for each app:
 ### EDA 
 The graph shows the spread of the number of classes in an app, which can also be understood as the number of smali files in an app. As the graph shows, malwares are condensed together around 0 - 2000. On contrast, random apps and popular apps are more widely spread. In addition, popular apps contain some outliers which have really large numbers. By taking a closer look at the specific number, malwares dominate the range of 0 - 2000. Most of the random apps are in the range 2000 - 7000. Outliers of popular apps are mostly located at the range > 7000.
 
-![class_graph.png](/data/report/class_graph.png)
+![class_graph.png](../data/report/class_graph.png)
 
 Then take a look at the number of unique apis. Those graphs look really similar to previous graphs. Malwares still condense at the small number area. Popular apps and random apps are more widely spread over the graph with some outliers. More specifically, malwares often contain 0 - 10000 unique apis. Random apps are mainly located in range 10000 - 25000. Popular apps dominate the range > 25000. Combining the conclusion we get from previous graph and statistics, we reinforce the idea that malwares have a size way smaller than other apps.
-![api.png](/data/report/api.png)
+![api.png](../data/report/api.png)
 
 We use PCA to transform the above features into 2 dimensions. We plot the PCA graph to see if three categories have clear differences in lower dimension. As we can see from the graph, green dots and orange dots are mainly overlapped. It is reasonable since both random apps and popular apps are considered as 'good' apps. For malwares, although part of them are overlapped with other apps, they mostly lie near y = 0 and their x value are always smaller than 0. So there are some features that can be used to split malwares and other apps.
 
-![pca.png](/data/report/pca.png)
+![pca.png](../data/report/pca.png)
 
 
 ### Estimator and Hyperparamter
@@ -103,7 +103,7 @@ Hindroid [1] uses a structured heterogeneous information network (HIN) to presen
 ### Kernel Introduction 
 - AA
 
-![AA.png | 10x10](/data/report/AA.png)
+![AA.png | 10x10](../data/report/AA.png)
 
 
 The meta-path is APP -(contains)->  API -(contains^-1)-> APP.
@@ -112,7 +112,7 @@ The items in AA represent the number of how many apis are shared between two app
 
 - ABA
 
-![ABA.png | 20x20](/data/report/ABA.png)
+![ABA.png | 20x20](../data/report/ABA.png)
 
 The meta-path is APP -(contains)-> API -(same code block)-> API -(contains^-1)-> APP
 
@@ -120,7 +120,7 @@ The items in ABA represents the number of paired apis in the same code block tha
 
 - APA 
 
-![APA.png | 20x20](/data/report/APA.png)
+![APA.png | 20x20](../data/report/APA.png)
 
 The meta-path is APP -(contains)-> API -(same package used)-> API -(contains^-1) -> APP
 
@@ -128,7 +128,7 @@ The items in APA represent the number of paired apis in the using the same packa
 
  - APBPA
  
- ![APBPA.png | 20x20](/data/report/APBPA.png)
+ ![APBPA.png | 20x20](../data/report/APBPA.png)
  
  The meta-path is APP -(contain)-> API -(same package)-> API -(same code block)-> API -(same package^-1)-> API -(contains^-1) -> APP
 
