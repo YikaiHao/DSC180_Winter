@@ -36,3 +36,23 @@ Word2vec is the new model we generate. This model is a powerful NLP model to hel
 Our Word2vec takes AA^t as an input and builds a graph based on the AA^t. Therefore, the graph contains two components - applications and apis. We then generate sentences as our input for the Word2vec model. Firstly, we randomly pick an app out, then we follow the path in the graph to search for the next api and app. We will end our path with an app. After finishing the sentence generating process, we will implement the genism’s Word2vec model to get our vector embeddings for every application and api. The final vector embeddings will be easily used in different machine learning models.  
 
 We use data visualization to check if our model makes sense. Our plot shows the vector embeddings after the dimension reduction. As the graph shows, the distribution of malwares and benigns are separated. Benigns are condensed at the left side with small x and y values. However, malwares are distributed at the right side, with a large x value and widespread y value. From the information on the graph, the model can detect malwares well. <br>
+
+![word2vec](data/report/word2vec_AA_vec10_tok10_sen50000.png)
+
+### Node2Vec
+The only difference between Node2vec and Word2vec is the random walk procedure. This change improves the inability of Node2vec and tracks the path with no specific rules about where to go. 
+
+We use all A, B, and P matrices to build our Node2vec. Since the B and P matrices both represent the relationships between apis, we combine the two matrices into one larger matrix to replace the B and P matrices. The values within the large matrix represent whether two apis have some relationships, no matter whether they are within the same code block or use the same package. 
+
+For the probability of random walks, there are three types of probability. For example, we have a path from t -> v. When choosing the next step for v, we have three different probabilities. If we get from v -> t, we have a probability of 1/p. In addition, if the next node from v has a connection with t, then the probability of the node will be 1. Other nodes will have a probability with 1/q. We then implement sentences into the genism’s Node2vec model.
+
+![node2vec_formula](data/report/node2vec_formula.png)
+
+Similar to Word2vec, we also plot out the vector embeddings after finishing the dimension reduction. The plot we get is shown below:
+![node2vec](data/report/node2vec_AA_vec200_tok20_sen50000.png)
+
+### Metapath2Vec
+The difference between Metapath2vec and Node2vec is that the Metapath2vec assigns specifically about where to go for the next step. We use A, B and P matrices for our Metapath2vec. For example, if our path given is ABA, we will generate a sentence from an app to an api first. Then we will check the next node is an api which is in the same code block with the previous api. Finally, our path will go to another app. We repeat this loop until we reach the maximum length we set or have no next node. We then implement sentences into the genism’s Metapath2vec model.
+
+After the dimension deduction process is done, the embedding plot is shown below:
+![metapath2vec](data/report/metapath2vec_ABA_vec200_tok10_sen50000.png)
