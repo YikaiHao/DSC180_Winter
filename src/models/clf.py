@@ -40,6 +40,7 @@ class clf:
         self._load()
         self._load_api_features()
         self._load_train_test()
+        self._plot_tsne()
         self._clf_acc()
 
 
