@@ -56,3 +56,21 @@ The difference between Metapath2vec and Node2vec is that the Metapath2vec assign
 
 After the dimension deduction process is done, the embedding plot is shown below:
 ![metapath2vec](data/report/metapath2vec_ABA_vec200_tok10_sen50000.png)
+
+## Result 
+Below are the results of different models. 
+
+### Classifiers
+After different models are built, we choose SVM, Random Forest, and Gradient Boosting as our classifiers while doing the final malware detection. The classifier with highest accuracy will be chosen as the classifier of a specific model. As the result table shows, most classifiers will be SVM. However, the Node2Vec model shows a preference on Gradient Boosting.
+
+### Result Tables 
+As the tables show below, train accuracy, test accuracy, and F1 score are the values to evaluate the performance of the model. For HinDroid, the AA kernel and the APA kernel have the best performance. And the AA kernel of Word2Vec has the best performance among Word2Vec, Node2Vec, and Metapath2Vec. Overall, the HinDroid model performs better than other models. Therefore, we will continuously make improvements on the HinDroid model to create a stronger model for malware detection.
+
+** HinDroid ** 
+
+| Metapath | Train_Acc | Test_Acc | F-1 Score | Model |
+|----------|-----------|----------|-----------|-------|
+| AA       | 1.0       | 0.9677   | 0.9655    | SVM   |
+| ABA      | 0.9407    | 0.8602   | 0.8506    | SVM   |
+| APA      | 1.0       | 0.9624   | 0.9770    | SVM   |
+| APBPA    | 0.9218    | 0.8602   | 0.8488    | SVM   |
