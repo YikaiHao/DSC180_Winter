@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import seaborn as sns
+import matplotlib.pyplot as plt
 from gensim.models import Word2Vec # load word2vec model
 from scipy.sparse import load_npz # load sparse matrix
 
@@ -112,7 +113,7 @@ class clf:
             'test_malware': 'crimson',
             'test_benign': 'steelblue'
         }
-        tsne_plt = sns.scatterplot(
+        sns.scatterplot(
             data=viz_df,
             x='vec1',
             y='vec2',
@@ -120,7 +121,7 @@ class clf:
             palette= color_dict,
         )
 
-        tsne_plt.savefig(self.plot_path)
+        plt.savefig(self.plot_path)
 
     def choose_model(self, model_name):
         if model_name == 'svm':
