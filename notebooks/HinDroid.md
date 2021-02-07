@@ -106,7 +106,7 @@ Hindroid [1] uses a structured heterogeneous information network (HIN) to presen
 ### Kernel Introduction 
 - AA
 
-![AA.png | 10x10](../data/report/AA.png)
+![AA.png](../data/report/AA.png)
 
 
 The meta-path is APP -(contains)->  API -(contains^-1)-> APP.
@@ -115,7 +115,7 @@ The items in AA represent the number of how many apis are shared between two app
 
 - ABA
 
-![ABA.png | 20x20](../data/report/ABA.png)
+![ABA.png](../data/report/ABA.png)
 
 The meta-path is APP -(contains)-> API -(same code block)-> API -(contains^-1)-> APP
 
@@ -123,7 +123,7 @@ The items in ABA represents the number of paired apis in the same code block tha
 
 - APA 
 
-![APA.png | 20x20](../data/report/APA.png)
+![APA](../data/report/APA.png)
 
 The meta-path is APP -(contains)-> API -(same package used)-> API -(contains^-1) -> APP
 
@@ -131,7 +131,7 @@ The items in APA represent the number of paired apis in the using the same packa
 
  - APBPA
  
- ![APBPA.png | 20x20](../data/report/APBPA.png)
+ ![APBPA](../data/report/APBPA.png)
  
  The meta-path is APP -(contain)-> API -(same package)-> API -(same code block)-> API -(same package^-1)-> API -(contains^-1) -> APP
 
