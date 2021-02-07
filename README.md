@@ -27,4 +27,4 @@ The four types of matrices are: A, B, P, and I matrices.
 - B matrix shows the connection between apis. The value within the B matrix shows whether two apis are contained in the same code block.
 - P matrix also shows the connection between apis. The value within the P matrix shows whether two apis use the same package.
 - I matrix shows the connection within the apis. The value within the I matrix shows whether two apis use the same invoke type.
-Currently, due to the large size of the unique apis we get, we are not able to calculate out the I matrix yet. Therefore, the kernel we have now is $AA^{T}$, ABA^t, APA^t, and APBP^tA^t. 
+Currently, due to the large size of the unique apis we get, we are not able to calculate out the I matrix yet. Therefore, the kernel we have now is AA^T, ABA^T, APA^T, and APBP^TA^T. 
