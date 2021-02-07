@@ -68,13 +68,13 @@ class clf:
     
         # creating X_train with shape(num_training_app, vec_size)
         train_lst = np.where(self.train_mat.toarray(), self.api_features, 0)
-        X_train = np.sum(train_lst, axis=1) / np.hstack(np.sum(self.train_mat, axis=1)).tolist()[0]
-        self.X_train = [X_train[i].tolist() for i in range(len(X_train))]
+        self.X_train = np.sum(train_lst, axis=1) / np.hstack(np.sum(self.train_mat, axis=1)).tolist()[0]
+        #self.X_train = [X_train[i].tolist() for i in range(len(X_train))]
 
         # create X_test with shape(num_tesing_app, vec_size)
         test_lst = np.where(self.test_mat.toarray(), self.api_features, 0)
-        X_test = np.sum(test_lst, axis=1) / np.hstack(np.sum(self.test_mat, axis=1)).tolist()[0]
-        self.X_test = [X_test[i].tolist() for i in range(len(X_test))]
+        self.X_test = np.sum(test_lst, axis=1) / np.hstack(np.sum(self.test_mat, axis=1)).tolist()[0]
+        #self.X_test = [X_test[i].tolist() for i in range(len(X_test))]
 
         self.y_train = self.labels['y_train']
         self.y_test = self.labels['y_test']
@@ -174,13 +174,15 @@ class clf:
         # train clf
         for m in tqdm(self.clf_lst):
             model = self.choose_model(m)
-            clf_dict[m] = model.fit(self.X_train, self.y_train) 
+            X_train = [self.X_train[i].tolist() for i in range(len(self.X_train))]
+            X_test = [self.X_test[i].tolist() for i in range(len(self.X_test))]
+            clf_dict[m] = model.fit(X_train, self.y_train) 
 
         # get test score 
         for m in tqdm(clf_dict):
             model = clf_dict[m]
-            test_acc = model.score(self.X_test, self.y_test)
-            test_f1 = f1_score(self.y_test, model.predict(self.X_test))
+            test_acc = model.score(X_test, self.y_test)
+            test_f1 = f1_score(self.y_test, model.predict(X_test))
             print(f'Model: {m}    Acc: {test_acc}     F1: {test_f1}')
 
 def run_clf(model_path, train_path, test_path, label_path, clf_lst, plot_path):
