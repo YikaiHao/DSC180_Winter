@@ -21,14 +21,18 @@ We design a special database to store the data we get. Since the main feature is
 ![database](data/report/database_new.png)
 ## Model 
 ### HinDroid
-HinDroid is the baseline model we use for our report. It contains different types of kernels and the meaning behind each kernel is different. It uses the features we extract from the data generating process to build some matrices. Each matrix shows a type of relationship between apis or applications. By choosing different types of matrices we want to combine together, we get the kernel we have. Then we will be able to use the kernels for malware detection.<br>
+HinDroid is the baseline model we use for our report. It contains different types of kernels and the meaning behind each kernel is different. It uses the features we extract from the data generating process to build some matrices. Each matrix shows a type of relationship between apis or applications. By choosing different types of matrices we want to combine together, we get the kernel we have. Then we will be able to use the kernels for malware detection.
+
 The four types of matrices are: A, B, P, and I matrices. 
 - A matrix shows the connection among apis and applications. The value within the A matrix will be one if the application contains the api.
 - B matrix shows the connection between apis. The value within the B matrix shows whether two apis are contained in the same code block.
 - P matrix also shows the connection between apis. The value within the P matrix shows whether two apis use the same package.
 - I matrix shows the connection within the apis. The value within the I matrix shows whether two apis use the same invoke type.
+
 Currently, due to the large size of the unique apis we get, we are not able to calculate out the I matrix yet. Therefore, the kernel we have now is AA^T, ABA^T, APA^T, and APBP^TA^T. 
 ### Word2Vec
-Word2vec is the new model we generate. This model is a powerful NLP model to help us find not only the direct relationship between apps but also the cluster connection between apps using the graph, which is a different approach to solve the malware detection problem with HinDroid. <br>
-Our Word2vec takes AA^t as an input and builds a graph based on the AA^t. Therefore, the graph contains two components - applications and apis. We then generate sentences as our input for the Word2vec model. Firstly, we randomly pick an app out, then we follow the path in the graph to search for the next api and app. We will end our path with an app. After finishing the sentence generating process, we will implement the genism’s Word2vec model to get our vector embeddings for every application and api. The final vector embeddings will be easily used in different machine learning models.  <br>
+Word2vec is the new model we generate. This model is a powerful NLP model to help us find not only the direct relationship between apps but also the cluster connection between apps using the graph, which is a different approach to solve the malware detection problem with HinDroid. 
+
+Our Word2vec takes AA^t as an input and builds a graph based on the AA^t. Therefore, the graph contains two components - applications and apis. We then generate sentences as our input for the Word2vec model. Firstly, we randomly pick an app out, then we follow the path in the graph to search for the next api and app. We will end our path with an app. After finishing the sentence generating process, we will implement the genism’s Word2vec model to get our vector embeddings for every application and api. The final vector embeddings will be easily used in different machine learning models.  
+
 We use data visualization to check if our model makes sense. Our plot shows the vector embeddings after the dimension reduction. As the graph shows, the distribution of malwares and benigns are separated. Benigns are condensed at the left side with small x and y values. However, malwares are distributed at the right side, with a large x value and widespread y value. From the information on the graph, the model can detect malwares well. <br>
