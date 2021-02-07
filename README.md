@@ -93,3 +93,9 @@ As the tables show below, train accuracy, test accuracy, and F1 score are the va
 | ABA      | 0.997     | 0.875    | 0.875     | SVM           |
 | APA      | 0.984     | 0.9125   | 0.907     | SVM           |
 | ABPBA    | 0.9563    | 0.8625   | 0.8608    | Random Forest |
+
+## References 
+[1] "HinDroid: An Intelligent Android Malware Detection System Based on Structured Heterogeneous Information Network" https://www.cse.ust.hk/~yqsong/papers/2017-KDD-HINDROID.pdf
+[2] "Efficient Estimation of Word Representations in Vector Space" https://arxiv.org/pdf/1301.3781.pdf
+[3] "Node2vec: Scalable Feature Learning for Networks" https://arxiv.org/pdf/1607.00653.pdf
+[4] "Metapath2vec: Scalable Representation Learning for Heterogeneous Networks" https://ericdongyx.github.io/papers/KDD17-dong-chawla-swami-metapath2vec.pdf
