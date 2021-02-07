@@ -1,4 +1,7 @@
 # HinDroid Report
+
+Authors: [**Yikai Hao**](https://github.com/YikaiHao), [**Yu-Chieh Chen**](https://github.com/yuc399), [**Ruoyu Liu**](https://github.com/rul141)
+
 ## Introduction 
 With more people starting to use cellphones and storing their information on cell phones, it is important to protect user’s information. The Android system is the most widely used mobile operating system which takes part of 80% of the market. Since the Android environment is open source, everyone is able to upload their apps and let users try on their apps. This leads to a severe problem of malwares on the Android system. Malwares are split into multiple categories - trojans, adware, etc. Each type of malware has different performance, they might send out messages unconsciously, steal the user's information, or lock down the phone until the user pays the ransom.
 
