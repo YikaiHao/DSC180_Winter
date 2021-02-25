@@ -52,8 +52,6 @@ class preprocess_csv:
             p_df = pd.read_csv(p).iloc[:, 1:]
             
             # random select apps 
-            print(p_df.app_id.unique())
-            print(app_size)
             app_lst = np.random.choice(p_df.app_id.unique(), app_size, replace=False)
             
             # only load random selected apps 
@@ -257,12 +255,12 @@ def build_mat(paths, sample_size, type_lst, output_path, matlst):
 
     if 'B' in matlst:
         matB(A)
-    print('B Finsihed')
+        print('B Finsihed')
 
     if 'P' in matlst:
         matP(A)
-    print('P Finished')
+        print('P Finished')
 
     if 'I' in matlst:
         matI(A)
-    print('I Finished')
+        print('I Finished')

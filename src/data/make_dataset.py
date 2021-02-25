@@ -37,7 +37,7 @@ def find_app_address(path):
     """
     l = []
     if os.path.isdir(path):
-        if os.listdir(path) == ['smali']:
+        if os.listdir(path) == ['smali'] or 'smali' in os.listdir(path):
             return path
         else:
             for p in os.listdir(path):
