@@ -1,38 +1,47 @@
 import pandas as pd
 import numpy as np
 import json 
+from tqdm import tqdm
 from scipy import sparse
-from sklearn import svm
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import GridSearchCV
+from sklearn.decomposition import PCA
+from sklearn.metrics import f1_score
+from sklearn.ensemble import RandomForestClassifier,GradientBoostingClassifier
+from sklearn.manifold import TSNE
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, recall_score, precision_score
 
 from src.util import *
 
 class model():
-    def __init__(self,X_paths,type_list,y_path,metapaths,output_path):
+    def __init__(self,X_paths,type_list,clf_lst,type_A,y_path,metapaths,output_path):
         self.df = pd.DataFrame()
         self.metapaths = metapaths
-        self.svms = [svm.SVC(kernel='precomputed') for mp in metapaths]
         self.output_path = output_path
+        self.clf_lst = clf_lst
+        self.type_A = type_A
 
         self._load_matrix(X_paths,type_list)
         self._load_y(y_path)
         self._construct_kernel(metapaths)
-        self._evaluate(self.metapaths,self.kernels,self.svms)
-        self._save_output()
-
+        self._save_data(self.metapaths,self.kernels)
+        self._evaluate(self.metapaths,self.kernels)
         
 
     def _load_matrix(self,X_paths,type_list):
         # load_matrix and save them with their corresponding type of matrix
         for p,t in zip(X_paths,type_list):
             matrix = sparse.load_npz(p)
-            if t == "A_train":
+            if "A_train" in t:
                 self.A_tr_mat = matrix
-            elif t == "A_test":
+            elif "A_test" in t:
                 self.A_test_mat = matrix 
-            elif t == "B_train":
+            elif "B_train" in t:
                 self.B_tr_mat = matrix 
-            elif t == "P_train":
+            elif "P_train" in t:
                 self.P_tr_mat = matrix
             else :
                 raise NotImplementedError 
@@ -72,56 +81,114 @@ class model():
         self.kernels = kernel_funcs 
     
         
-    def _evaluate(self,metapaths,kernels, svms):
+    def _save_data(self,metapaths,kernels):
         y_train = self.y_train
         y_test = self.y_test 
         X_train = self.A_tr_mat
         X_test = self.A_test_mat
-        for mp, kernel, svm in zip(metapaths, kernels, svms):
+        for mp, kernel in zip(metapaths, kernels):
             print(mp)
             gram_train = kernel(X_train).toarray()
-            svm.fit(gram_train,y_train)
-            train_acc = svm.score(gram_train, y_train)
-            y_pred_train = svm.predict(gram_train)
-            f1_tr = f1_score(y_train, y_pred_train)
-            tn_tr, fp_tr, fn_tr, tp_tr = confusion_matrix(y_pred_train, y_pred_train).ravel()
-            print('Train Accuracy',train_acc)
-            print('Train F1', f1_tr)
-            print('Train Precision',precision_score(y_train,y_pred_train))
-            print('Train Recall',recall_score(y_train,y_pred_train))
-            print('Train Data Size', tn_tr+fp_tr+fn_tr+tp_tr)
-
-
-
             gram_test = kernel(X_test).toarray()
-            y_pred = svm.predict(gram_test)
-            test_acc = accuracy_score(y_test, y_pred)
-            f1 = f1_score(y_test, y_pred)
-            tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-            print('------')
-            print('Test Accuracy',test_acc)
-            print('Test F1', f1)
-            print('Test Precision',precision_score(y_test,y_pred))
-            print('Test Recall',recall_score(y_test,y_pred))
-            print('Test Data Size',tn+fp+fn+tp)
-            print('---------------------------------')
-            self.df[mp] = pd.Series({
-                    'train_acc': train_acc, 'test_acc': test_acc,
-                    'train_f1':f1_tr,'train_TP':tp_tr,'train_FP':fp_tr,'train_TN':tn_tr,'train_FN':fn_tr,
-                    'test_f1': f1,'test_TP': tp, 'test_FP': fp, 'test_TN': tn, 'test_FN': fn
-                })
-            pd.DataFrame(gram_train).to_csv(f'{self.output_path}/{mp}_train.csv')
-            pd.DataFrame(gram_test).to_csv(f'{self.output_path}/{mp}_test.csv')
-            
-        self.df = self.df.T
-        self.df.index = self.df.index.set_names(['metapath'])
-    
-    def _save_output(self):
-        self.df.to_csv(f'{self.output_path}/result.csv')
+            pd.DataFrame(gram_train).to_csv(f'{self.output_path}/{self.type_A}_{mp}_train.csv', index=False)
+            pd.DataFrame(gram_test).to_csv(f'{self.output_path}/{self.type_A}_{mp}_test.csv', index=False)
+            print(f'{mp} data saved')
 
-def run_model(X_paths,type_list,y_path,metapaths,output_path):
+    def choose_model(self, model_name):
+        if model_name == 'svm':
+            # svm_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('svm', SVC())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            # 'svm__C': [0.1,1, 5, 10, 100],
+            # 'svm__gamma': [1,0.1,0.01,0.05, 0.001],
+            # 'svm__kernel': ['rbf', 'sigmoid'],
+            # 'pca__n_components':[1, 0.99, 0.95, 0.9]
+            # }
+            # model = GridSearchCV(svm_pipe, param_grid, n_jobs=-1)
+            model = SVC(kernel='precomputed')
+        elif model_name == 'rf':
+            # rf_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('rf', RandomForestClassifier())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            # 'rf__max_depth': [2, 4, 6, 8, None],
+            # 'rf__n_estimators': [5, 10, 15, 20, 50, 100],
+            # 'rf__min_samples_split': [3, 5, 7, 9],
+            # 'pca__n_components':[1, 0.99, 0.95, 0.9]
+            # }
+            # model = GridSearchCV(rf_pipe, param_grid, n_jobs=-1)
+            model = RandomForestClassifier()
+        elif model_name == 'dt':
+            # dt_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('dt', DecisionTreeClassifier())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            # 'dt__max_depth': [2, 4, 6, 8, None],
+            # 'dt__n_estimators': [5, 10, 15, 20, 50, 100],
+            # 'dt__min_samples_split': [3, 5, 7, 9],
+            # 'pca__n_components':[1, 0.99, 0.95, 0.9]
+            # }
+            # model = GridSearchCV(dt_pipe, param_grid, n_jobs=-1)
+            model = DecisionTreeClassifier()
+        else:
+            # gb_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('gb', GradientBoostingClassifier())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            #     'gb__loss': ['deviance', 'exponential'],
+            #     'gb__n_estimators': [5, 10, 15, 20, 50, 100],
+            #     'gb__max_depth': [2, 4, 6, 8],
+            #     'gb__min_samples_split': [3, 5, 7, 9],
+            #     'pca__n_components':[1, 0.99, 0.95, 0.9],
+            # }
+            # model = GridSearchCV(gb_pipe, param_grid, n_jobs=-1)
+            model = GradientBoostingClassifier()
+        return model 
+
+    def _clf_acc(self,train,test):
+        clf_dict = {}
+        # train clf
+        for m in self.clf_lst:
+            model = self.choose_model(m)
+            clf_dict[m] = model.fit(train, self.y_train) 
+
+        # get test score 
+        for m in clf_dict:
+            model = clf_dict[m]
+            test_acc = model.score(test, self.y_test)
+            train_acc = model.score(train, self.y_train)
+            test_f1 = f1_score(self.y_test, model.predict(test))
+            print(f'Model: {m}    Train-Acc:{train_acc}    Test-Acc: {test_acc}     F1: {test_f1}')
+
+    def _evaluate(self,metapaths,kernels):
+        print(self.type_A)
+        X_train = self.A_tr_mat
+        X_test = self.A_test_mat
+        for mp, kernel in zip(metapaths, kernels):
+            print(mp)
+            gram_train = pd.read_csv(f'{self.output_path}/{self.type_A}_{mp}_train.csv').values
+            gram_test = pd.read_csv(f'{self.output_path}/{self.type_A}_{mp}_test.csv').values
+            self._clf_acc(gram_train,gram_test)
+        print("DONE")
+
+    
+
+def run_model(X_paths,type_list,clf_lst,type_A,y_path,metapaths,output_path):
     """
     Run model 
     """
-    model(X_paths,type_list,y_path,metapaths,output_path)
+    model(X_paths,type_list,clf_lst,type_A,y_path,metapaths,output_path)
     print("Result saved")
