@@ -10,6 +10,7 @@ from features.build_features import build_mat
 from features.word2vec import build_w2v
 from features.node2vec import build_n2v
 from features.metapath2vec import build_m2v
+from features.build_new_features import build_mat as new_build_mat
 from models.run_model import run_model 
 from models.clf import run_clf
 from visualization.eda import generate
@@ -43,6 +44,10 @@ def main(targets):
     if 'feature_build' in targets:
         params = load_params('config/feature-params.json')
         build_mat(**params)
+
+    if 'new_feature_build' in targets:
+        params = load_params('config/new_feature-params.json')
+        new_build_mat(**params)
     
     if 'run_model' in targets:
         params = load_params('config/test-params.json')
