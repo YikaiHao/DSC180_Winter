@@ -32,6 +32,7 @@ class preprocess_csv:
         self._reconstruct_ids()
         self._train_test_split(train_test_split)
         self._train_test_y()
+        self._save_x()
         self._save_y()
         #self.train
         #self.test 
@@ -70,8 +71,14 @@ class preprocess_csv:
         self.df['api_package_id'] = cantor_pairing(
             np.vstack((self.df.api_id.values, self.df.package_id.values))
         )
+        
+        # block_id: combine block_id, class_id, and app_id 
+        self.df['block_id'] = cantor_pairing(
+            np.vstack((self.df.block_id.values, self.df.class_id.values, self.df.app_id.values))
+        )
 
         self.df['api_package_id'] = reset_id(self.df['api_package_id'])
+        self.df['block_id'] = reset_id(self.df['block_id'])
         
     def _train_test_split(self, train_test_split):
         
@@ -90,6 +97,10 @@ class preprocess_csv:
         # generate y_train and y_test 
         self.y_train = list(self.train.groupby('app_id').agg({'type':np.unique}).to_dict()['type'].values())
         self.y_test = list(self.test.groupby('app_id').agg({'type':np.unique}).to_dict()['type'].values())
+    
+    def _save_x(self):
+        self.train.to_csv(f'{self.output_path}/preprocess_train.csv', index=False)
+        self.test.to_csv(f'{self.output_path}/preprocess_test.csv', index=False)
         
     def _save_y(self):
         json.dump({'y_train': self.y_train, 'y_test':self.y_test}, open(f"{self.output_path}/label.json", 'w' ))
@@ -98,14 +109,27 @@ class matA():
     """
     Generate matrix A 
     """
-    def __init__(self, preprocess, pack=True, api=True):
-        self.train = preprocess.train
-        self.test = preprocess.test 
-        self.y_train = preprocess.y_train
-        self.y_test = preprocess.y_test
-        self.output = preprocess.output_path
+    def __init__(self, output_path, pack=True, api=True):
+        self.output = output_path
         self.pack=pack
         self.api=api
+        
+        # check which reduce method is used 
+        if self.pack and self.api:
+            self.apply_name = 'api_package_id'
+        elif self.pack: 
+            self.apply_name = 'package_id'
+        else:
+            self.apply_name = 'api_id'
+            
+        # Load training and testing df 
+        usecols = ['app_id', 'block_id', self.apply_name]
+        self.train = pd.read_csv(f'{output_path}/preprocess_train.csv', usecols=usecols)
+        self.test = pd.read_csv(f'{output_path}/preprocess_test.csv', usecols=usecols)
+        
+        # load train/test y labels 
+        self.y_train = json.load(open(f'{output_path}label.json'))['y_train']
+        self.y_test = json.load(open(f'{output_path}label.json'))['y_train']
         self._reset_id()
         self._construct_csr_train_mat()
         self._construct_csr_test_mat()
@@ -119,18 +143,7 @@ class matA():
         # reset app id
         self.train.loc[:,'app_id'] = reset_id(self.train['app_id'])
         self.train.loc[:, 'block_id'] = reset_id(self.train['block_id'])
-#         self.train.loc[:, 'package_id'] = reset_id(self.train['package_id'])
-#         self.train.loc[:, 'api_id'] = reset_id(self.train['api_id'])
-#         self.train.loc[:, 'return_id'] = reset_id(self.train['return_id'])
-#         self.train.loc[:, 'class_type_id'] = reset_id(self.train['class_type_id'])
-#         self.train.loc[:, 'method_id'] = reset_id(self.train['method_id'])
 
-        if self.pack and self.api:
-            self.apply_name = 'api_package_id'
-        elif self.pack: 
-            self.apply_name = 'package_id'
-        else:
-            self.apply_name = 'api_id'
             
         # delete test api row if test api not in train
         self.test = self.test[self.test[self.apply_name].isin(self.train[self.apply_name])]
@@ -175,7 +188,7 @@ class matA():
         else:
             save_npz(f'{self.output}/A_train_reduced_api_name.npz', self.X_train)
             save_npz(f'{self.output}/A_test_reduced_api_name.npz', self.X_test)
-
+        
 class matB():
     """
     Generate matrix B 
@@ -212,14 +225,14 @@ def build_mat(paths, sample_size, type_lst, output_path, matlst):
     """
     Build matrixes 
     """
-    preprocess = preprocess_csv(
+    _ = preprocess_csv(
         paths, sample_size, type_lst, output_path
     )
     print('Preprocess Finished')
     
-    A = matA(preprocess, pack=True, api=True)
-    A_pack = matA(preprocess, pack=True, api=False)
-    A_api = matA(preprocess, pack=False, api=True)      
+    A = matA(output_path, pack=True, api=True)
+    A_pack = matA(output_path, pack=True, api=False)
+    A_api = matA(output_path, pack=False, api=True)      
 
     print('A Finished')
 
