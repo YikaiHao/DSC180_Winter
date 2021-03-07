@@ -5,6 +5,7 @@
         "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/B_10000_train.npz",
         "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/P_10000_train.npz", 
         "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/I_10000_train.npz"
+
     ],
     "type_list": ["A_train","A_test","B_train","P_train","I_train"],
     "clf_lst":["svm", "rf","dt","gb"],
