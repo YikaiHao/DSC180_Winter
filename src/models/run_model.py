@@ -44,6 +44,8 @@ class model():
                 self.P_tr_mat = matrix
             elif "R_train" in t:
                 self.R_tr_mat = matrix 
+            elif "R_test" in t: 
+                self.R_test_mat = matrix
             elif "I_train" in t:
                 self.I_tr_mat = matrix
             else :
@@ -61,15 +63,13 @@ class model():
         if "A" in metapath:
             A_tr_mat_trans = self.A_tr_mat.T
         if "R" in metapath:
-            R_tr_mat = self.R_tr_mat
+            R_tr_mat_trans = self.R_tr_mat.T
         if "B" in metapath: 
             B_tr_mat = self.B_tr_mat
         if "P" in metapath:
             P_tr_mat = self.P_tr_mat
         if "I" in metapath:
             I_tr_mat = self.I_tr_mat
-        if "R" in metapath:
-            R_tr_mat_trans = self.R_tr_mat.T
         
 
         # return functions for metapath 
@@ -107,8 +107,12 @@ class model():
     def _save_data(self,metapaths,kernels):
         y_train = self.y_train
         y_test = self.y_test 
-        X_train = self.A_tr_mat
-        X_test = self.A_test_mat
+        if "A" in metapaths[0]:
+            X_train = self.A_tr_mat
+            X_test = self.A_test_mat
+        else:
+            X_train = self.R_tr_mat
+            X_test = self.R_test_mat
         for mp, kernel in zip(metapaths, kernels):
             print(mp)
             gram_train = kernel(X_train).toarray()
@@ -199,8 +203,12 @@ class model():
 
     def _evaluate(self,metapaths,kernels):
         print(self.type_A)
-        X_train = self.A_tr_mat
-        X_test = self.A_test_mat
+        if "A" in metapaths[0]:
+            X_train = self.A_tr_mat
+            X_test = self.A_test_mat
+        else:
+            X_train = self.R_tr_mat
+            X_test = self.R_test_mat
         for mp, kernel in zip(metapaths, kernels):
             print(mp)
             gram_train = pd.read_csv(f'{self.output_path}/{mp}_{self.type_A}_train.csv').values

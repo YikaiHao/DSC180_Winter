@@ -1,16 +1,13 @@
 {
     "X_paths":[ 
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/A_10000_train.npz",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/A_10000_test.npz",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/B_10000_train.npz",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/P_10000_train.npz", 
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/I_10000_train.npz"
-
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/R_train.npz",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/R_test.npz",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/B_train_R.npz"
     ],
-    "type_list": ["A_train","A_test","B_train","P_train","I_train"],
+    "type_list": ["R_train","R_test","B_train"],
     "clf_lst":["svm", "rf","dt","gb"],
-    "type_A":"tfidf_10000",
+    "type_A":"original",
     "y_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/label.json",
-    "metapaths": ["AA","ABA","APA","APBPA","ABPBA","AIA","ABPIPBA"],
+    "metapaths": ["RR","RBR"],
     "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/model"
 }
