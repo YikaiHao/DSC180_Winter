@@ -19,7 +19,7 @@ class MyCorpus:
             yield line.strip().split(' ')
 
 
-def build_w2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_path):
+def build_w2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, type_A, output_path):
     labels = json.load(open(label_path))
 
     # generate word2vec based on AA matrix 
@@ -42,7 +42,7 @@ def build_w2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_
 
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=vec_size)
-        model.save(f'{output_path}/word2vec_AA_vec{vec_size}_tok{num_tokens}_sen{num_sentences}.model')
+        model.save(f'{output_path}/word2vec_AA_vec{vec_size}_tok{num_tokens}_sen{num_sentences}_{type_A}.model')
         
 
 

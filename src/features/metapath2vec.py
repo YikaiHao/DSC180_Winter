@@ -19,11 +19,12 @@ class MyCorpus:
             yield line.strip().split(' ')
 
 class Metapath2Vec():
-    def __init__(self,label_path, mat_dict,num_sentences, input_path, num_tokens, vec_size,output_path):
+    def __init__(self,label_path, mat_dict,num_sentences, input_path, num_tokens, vec_size,type_A,output_path):
         self.label_path = label_path
         self.mat_dict = mat_dict
         self.num_sentences = num_sentences
         self.input_path = input_path
+        self.type_A = type_A
         self.num_tokens = num_tokens
         self.vec_size = vec_size 
         self.output_path = output_path
@@ -64,7 +65,7 @@ class Metapath2Vec():
         
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size,min_count = 1)
-        model.save(f'{self.output_path}/metapath2vec_{self.input_path}_vec{self.vec_size}_tok{self.num_tokens}_sen{self.num_sentences}.model')
+        model.save(f'{self.output_path}/metapath2vec_{self.input_path}_vec{self.vec_size}_tok{self.num_tokens}_sen{self.num_sentences}_{self.type_A}.model')
     
     def generate_step(self,matrix,curr_type,curr_ind):
         if curr_type == 'app':
@@ -74,8 +75,8 @@ class Metapath2Vec():
         
 
         
-def build_m2v(label_path, mat_dict,num_sentences, input_path, num_tokens, vec_size,output_path):
-    metapath2vec = Metapath2Vec(label_path, mat_dict,num_sentences, input_path, num_tokens, vec_size,output_path)
+def build_m2v(label_path, mat_dict,num_sentences, input_path, num_tokens, vec_size,type_A, output_path):
+    metapath2vec = Metapath2Vec(label_path, mat_dict,num_sentences, input_path, num_tokens, vec_size,type_A, output_path)
     print('start')
     metapath2vec.perform_walk()
 

@@ -152,21 +152,6 @@ class model():
             # }
             # model = GridSearchCV(rf_pipe, param_grid, n_jobs=-1)
             model = RandomForestClassifier()
-        elif model_name == 'dt':
-            # dt_pipe = Pipeline([
-            # ('ct', StandardScaler()),
-            # ('pca', PCA(svd_solver='full')),
-            # ('dt', DecisionTreeClassifier())
-            # ])
-            # # Using cv to find the best hyperparameter
-            # param_grid = {
-            # 'dt__max_depth': [2, 4, 6, 8, None],
-            # 'dt__n_estimators': [5, 10, 15, 20, 50, 100],
-            # 'dt__min_samples_split': [3, 5, 7, 9],
-            # 'pca__n_components':[1, 0.99, 0.95, 0.9]
-            # }
-            # model = GridSearchCV(dt_pipe, param_grid, n_jobs=-1)
-            model = DecisionTreeClassifier()
         else:
             # gb_pipe = Pipeline([
             # ('ct', StandardScaler()),
