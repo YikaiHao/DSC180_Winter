@@ -24,8 +24,9 @@ class preprocess_csv:
     """
     Preprocess csv file for construction of matrix A and B 
     """
-    def __init__(self, paths, sample_size, type_lst, output_path, train_test_split=0.8,):
+    def __init__(self, paths, sample_size, type_lst, output_path, tf_idf_size, train_test_split=0.8,):
         self.output_path = output_path
+        self.tf_idf_size = tf_idf_size
         self.df = pd.DataFrame()
         self._load_csv(paths, sample_size, type_lst)
         self._reconstruct_ids()
@@ -112,6 +113,7 @@ class matA:
         self.y_train = preprocess.y_train
         self.y_test = preprocess.y_test
         self.output = preprocess.output_path
+        self.tf_idf_size = preprocess.tf_idf_size
         self._reset_id()
         self._construct_csr_train_mat()
         self._construct_csr_test_mat()
@@ -161,8 +163,8 @@ class matA:
         
         
     def _save_train_test(self): 
-        save_npz(f'{self.output}/A_train.npz', self.X_train)
-        save_npz(f'{self.output}/A_test.npz', self.X_test)
+        save_npz(f'{self.output}/A_{self.tf_idf_size}_train.npz', self.X_train)
+        save_npz(f'{self.output}/A_{self.tf_idf_size}_test.npz', self.X_test)
         
         
 class matB():
@@ -172,6 +174,7 @@ class matB():
     def __init__(self, A):
         self.train = A.train.copy()
         self.output = A.output
+        self.tf_idf_size = A.tf_idf_size
         #self.X_train
         self._construct_csr_train_mat()
         self._save_mat()
@@ -188,7 +191,7 @@ class matB():
         self.X_train = self.X_train.astype(bool).astype(int)
         
     def _save_mat(self): 
-        save_npz(f'{self.output}/B_train.npz', self.X_train)
+        save_npz(f'{self.output}/B_{self.tf_idf_size}_train.npz', self.X_train)
 
 class matP():
     """
@@ -197,6 +200,7 @@ class matP():
     def __init__(self, A):
         self.train = A.train.copy()
         self.output = A.output
+        self.tf_idf_size = A.tf_idf_size
         #self.X_train
         self._construct_csr_train_mat()
         self._save_mat()
@@ -213,7 +217,7 @@ class matP():
         self.X_train = self.X_train.astype(bool).astype(int)
         
     def _save_mat(self): 
-        save_npz(f'{self.output}/P_train.npz', self.X_train)
+        save_npz(f'{self.output}/P_{self.tf_idf_size}_train.npz', self.X_train)
 
 class matI():
     """
@@ -222,6 +226,7 @@ class matI():
     def __init__(self, A):
         self.train = A.train.copy()
         self.output = A.output
+        self.tf_idf_size = A.tf_idf_size
         #self.X_train
         self._construct_csr_train_mat()
         self._save_mat()
@@ -238,14 +243,14 @@ class matI():
         self.X_train = self.X_train.astype(bool).astype(int)
         
     def _save_mat(self): 
-        save_npz(f'{self.output}/I_train.npz', self.X_train)
+        save_npz(f'{self.output}/I_{self.tf_idf_size}_train.npz', self.X_train)
 
-def build_mat(paths, sample_size, type_lst, output_path, matlst):
+def build_mat(paths, sample_size, type_lst, output_path, matlst, tf_idf_size=None):
     """
     Build matrixes 
     """
     preprocess = preprocess_csv(
-        paths, sample_size, type_lst, output_path
+        paths, sample_size, type_lst, output_path, tf_idf_size
     )
     print('Preprocess Finished')
     
