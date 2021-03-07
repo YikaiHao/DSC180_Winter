@@ -197,8 +197,9 @@ class matR():
         self.output = output_path
         
         # Load training and testing df 
-        self.train = pd.read_csv(f'{output_path}/preprocess_train.csv', usecols=['app_id', 'return_id'])
-        self.test = pd.read_csv(f'{output_path}/preprocess_test.csv', usecols=['app_id', 'return_id'])
+        usecols = ['app_id', 'block_id', 'return_id']
+        self.train = pd.read_csv(f'{output_path}/preprocess_train.csv', usecols=usecols)
+        self.test = pd.read_csv(f'{output_path}/preprocess_test.csv', usecols=usecols)
         
         # load train/test y labels 
         self.y_train = json.load(open(f'{output_path}label.json'))['y_train']
@@ -215,6 +216,7 @@ class matR():
         
         # reset app id
         self.train.loc[:,'app_id'] = reset_id(self.train['app_id'])
+        self.train.loc[:, 'block_id'] = reset_id(self.train['block_id'])
 
             
         # delete test api row if test api not in train
@@ -286,6 +288,31 @@ class matB():
         else:
             save_npz(f'{self.output}/B_train_reduced_api_name.npz', self.X_train)
 
+class matRB():
+    """
+    Generate matrix B 
+    """
+    def __init__(self, R):
+        self.train = R.train.copy()
+        self.output = R.output
+        #self.X_train
+        self._construct_csr_train_mat()
+        self._save_mat()
+        
+        
+    def _construct_csr_train_mat(self):
+        row = self.train.return_id.values
+        col = self.train.block_id.values
+        data = np.ones((len(row), ))
+        row_unique = np.unique(row)
+        col_unique = np.unique(col)
+        preRB = csc_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique))).astype(bool).astype(int)
+        self.X_train = preRB.dot(preRB.T)
+        self.X_train = self.X_train.astype(bool).astype(int)
+        
+    def _save_mat(self): 
+        save_npz(f'{self.output}/B_train_R.npz', self.X_train)
+
 def build_mat(paths, sample_size, type_lst, output_path, matlst):
     """
     Build matrixes 
@@ -295,14 +322,19 @@ def build_mat(paths, sample_size, type_lst, output_path, matlst):
     )
     print('Preprocess Finished')
     
-    A = matA(output_path, pack=True, api=True)
-    A_pack = matA(output_path, pack=True, api=False)
-    A_api = matA(output_path, pack=False, api=True)      
-
-    print('A Finished')
+    if 'A' in matlst:
+        A = matA(output_path, pack=True, api=True)
+        A_pack = matA(output_path, pack=True, api=False)
+        A_api = matA(output_path, pack=False, api=True)      
+        print('A Finished')
 
     if 'R' in matlst:
-        matR(output_path)
+        R = matR(output_path)
+        print('R Finished')
+
+    if 'RB' in matlst:
+        matRB(R)
+        print('RB Finished')
 
     if 'B' in matlst:
         matB(A)

@@ -5,6 +5,7 @@ from tqdm import tqdm
 import seaborn as sns
 import matplotlib.pyplot as plt
 from gensim.models import Word2Vec # load word2vec model
+from scipy import sparse
 from scipy.sparse import load_npz # load sparse matrix
 
 from sklearn.pipeline import Pipeline
@@ -68,12 +69,13 @@ class clf:
     def _load_train_test(self):
     
         # creating X_train with shape(num_training_app, vec_size)
-        self.X_train = (self.train_mat.toarray().dot(self.api_features)) / self.train_mat.toarray().sum(axis=1).reshape(-1,1)
+        self.api_features = sparse.csc_matrix(self.api_features)
+        self.X_train = (self.train_mat.dot(self.api_features)) / self.train_mat.sum(axis=1).reshape(-1,1)
         self.X_train = self.X_train.tolist()
         #self.X_train = [X_train[i].tolist() for i in range(len(X_train))]
 
         # create X_test with shape(num_tesing_app, vec_size)
-        self.X_test = (self.test_mat.toarray().dot(self.api_features)) / self.test_mat.toarray().sum(axis=1).reshape(-1,1)
+        self.X_test = (self.test_mat.dot(self.api_features)) / self.test_mat.sum(axis=1).reshape(-1,1)
         self.X_test = self.X_test.tolist()
         #self.X_test = [X_test[i].tolist() for i in range(len(X_test))]
 
