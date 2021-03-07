@@ -19,11 +19,12 @@ class MyCorpus:
             yield line.strip().split(' ')
 
 class Node2Vec():
-    def __init__(self,label_path, mat_dict, num_sentence, num_tokens, vec_size,output_path,p,q):
+    def __init__(self,label_path, mat_dict, num_sentence, num_tokens, vec_size,type_A, output_path,p,q):
         self.label_path = label_path
         self.mat_dict = mat_dict
         self.num_sentences = num_sentence
         self.num_tokens = num_tokens
+        self.type_A = type_A
         self.vec_size = vec_size
         self.output_path = output_path
         self.p = p 
@@ -75,7 +76,7 @@ class Node2Vec():
                 sentences.append(sentence)
         corpus = MyCorpus(sentences)
         model = gensim.models.Word2Vec(sentences=corpus, size=self.vec_size, min_count=1)
-        model.save(f'{self.output_path}/node2vec_{self.type}_vec{self.vec_size}_tok{self.num_tokens}_sen{self.num_sentences}.model')
+        model.save(f'{self.output_path}/node2vec_{self.type}_vec{self.vec_size}_tok{self.num_tokens}_sen{self.num_sentences}_{self.type_A}.model')
         print('saved')
     
     def convert_to_string(self,row_num):
@@ -111,7 +112,7 @@ class Node2Vec():
         return return_val, curr
             
 
-def build_n2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_path,p,q):
-    node2vec = Node2Vec(label_path, mat_dict, num_sentences, num_tokens, vec_size, output_path,p,q)
+def build_n2v(label_path, mat_dict, num_sentences, num_tokens, vec_size, type_A, output_path,p,q):
+    node2vec = Node2Vec(label_path, mat_dict, num_sentences, num_tokens, vec_size, type_A, output_path,p,q)
     print('start')
     node2vec.perform_walk()

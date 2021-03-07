@@ -12,9 +12,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 from sklearn.decomposition import PCA
-from sklearn.metrics import f1_score
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, recall_score, precision_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.manifold import TSNE
 
 
@@ -125,48 +125,66 @@ class clf:
 
     def choose_model(self, model_name):
         if model_name == 'svm':
-            svm_pipe = Pipeline([
-            ('ct', StandardScaler()),
-            ('pca', PCA(svd_solver='full')),
-            ('svm', SVC())
-            ])
-            # Using cv to find the best hyperparameter
-            param_grid = {
-            'svm__C': [0.1,1, 5, 10, 100],
-            'svm__gamma': [1,0.1,0.01,0.05, 0.001],
-            'svm__kernel': ['rbf', 'sigmoid'],
-            'pca__n_components':[1, 0.99, 0.95, 0.9]
-            }
-            model = GridSearchCV(svm_pipe, param_grid, n_jobs=-1)
+            # svm_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('svm', SVC())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            # 'svm__C': [0.1,1, 5, 10, 100],
+            # 'svm__gamma': [1,0.1,0.01,0.05, 0.001],
+            # 'svm__kernel': ['rbf', 'sigmoid'],
+            # 'pca__n_components':[1, 0.99, 0.95, 0.9]
+            # }
+            # model = GridSearchCV(svm_pipe, param_grid, n_jobs=-1)
+            model = SVC()
         elif model_name == 'rf':
-            rf_pipe = Pipeline([
-            ('ct', StandardScaler()),
-            ('pca', PCA(svd_solver='full')),
-            ('rf', RandomForestClassifier())
-            ])
-            # Using cv to find the best hyperparameter
-            param_grid = {
-            'rf__max_depth': [2, 4, 6, 8, None],
-            'rf__n_estimators': [5, 10, 15, 20, 50, 100],
-            'rf__min_samples_split': [3, 5, 7, 9],
-            'pca__n_components':[1, 0.99, 0.95, 0.9]
-            }
-            model = GridSearchCV(rf_pipe, param_grid, n_jobs=-1)
+            # rf_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('rf', RandomForestClassifier())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            # 'rf__max_depth': [2, 4, 6, 8, None],
+            # 'rf__n_estimators': [5, 10, 15, 20, 50, 100],
+            # 'rf__min_samples_split': [3, 5, 7, 9],
+            # 'pca__n_components':[1, 0.99, 0.95, 0.9]
+            # }
+            # model = GridSearchCV(rf_pipe, param_grid, n_jobs=-1)
+            model = RandomForestClassifier()
+        elif model_name == 'dt':
+            # dt_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('dt', DecisionTreeClassifier())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            # 'dt__max_depth': [2, 4, 6, 8, None],
+            # 'dt__n_estimators': [5, 10, 15, 20, 50, 100],
+            # 'dt__min_samples_split': [3, 5, 7, 9],
+            # 'pca__n_components':[1, 0.99, 0.95, 0.9]
+            # }
+            # model = GridSearchCV(dt_pipe, param_grid, n_jobs=-1)
+            model = DecisionTreeClassifier()
         else:
-            gb_pipe = Pipeline([
-            ('ct', StandardScaler()),
-            ('pca', PCA(svd_solver='full')),
-            ('gb', GradientBoostingClassifier())
-            ])
-            # Using cv to find the best hyperparameter
-            param_grid = {
-                'gb__loss': ['deviance', 'exponential'],
-                'gb__n_estimators': [5, 10, 15, 20, 50, 100],
-                'gb__max_depth': [2, 4, 6, 8],
-                'gb__min_samples_split': [3, 5, 7, 9],
-                'pca__n_components':[1, 0.99, 0.95, 0.9],
-            }
-            model = GridSearchCV(gb_pipe, param_grid, n_jobs=-1)
+            # gb_pipe = Pipeline([
+            # ('ct', StandardScaler()),
+            # ('pca', PCA(svd_solver='full')),
+            # ('gb', GradientBoostingClassifier())
+            # ])
+            # # Using cv to find the best hyperparameter
+            # param_grid = {
+            #     'gb__loss': ['deviance', 'exponential'],
+            #     'gb__n_estimators': [5, 10, 15, 20, 50, 100],
+            #     'gb__max_depth': [2, 4, 6, 8],
+            #     'gb__min_samples_split': [3, 5, 7, 9],
+            #     'pca__n_components':[1, 0.99, 0.95, 0.9],
+            # }
+            # model = GridSearchCV(gb_pipe, param_grid, n_jobs=-1)
+            model = GradientBoostingClassifier()
         return model 
 
     def _clf_acc(self):
@@ -185,7 +203,9 @@ class clf:
             test_acc = model.score(X_test, self.y_test)
             train_acc = model.score(X_train, self.y_train)
             test_f1 = f1_score(self.y_test, model.predict(X_test))
-            print(f'Model: {m}    Train-Acc:{train_acc}    Test-Acc: {test_acc}     F1: {test_f1}')
+            tn, fp, fn, tp = confusion_matrix(self.y_test, model.predict(X_test)).ravel()
+
+            print(f'Model: {m}    Train-Acc:{train_acc}    Test-Acc: {test_acc}     F1: {test_f1}     TP: {tp}      TN: {tn}     FN: {fn}     FP: {fp}')
 
 def run_clf(model_path, train_path, test_path, label_path, clf_lst, plot_path, vec_size):
     """

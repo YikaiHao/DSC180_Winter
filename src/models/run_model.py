@@ -7,7 +7,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
 from sklearn.decomposition import PCA
-from sklearn.metrics import f1_score
 from sklearn.ensemble import RandomForestClassifier,GradientBoostingClassifier
 from sklearn.manifold import TSNE
 from sklearn.tree import DecisionTreeClassifier
@@ -43,6 +42,10 @@ class model():
                 self.B_tr_mat = matrix 
             elif "P_train" in t:
                 self.P_tr_mat = matrix
+            elif "R_train" in t:
+                self.R_tr_mat = matrix 
+            elif "I_train" in t:
+                self.I_tr_mat = matrix
             else :
                 raise NotImplementedError 
     
@@ -55,9 +58,19 @@ class model():
 
     def _kernel_func(self, metapath):
         # store the matrix 
-        A_tr_mat_trans = self.A_tr_mat.T
-        B_tr_mat = self.B_tr_mat
-        P_tr_mat = self.P_tr_mat
+        if "A" in metapath:
+            A_tr_mat_trans = self.A_tr_mat.T
+        if "R" in metapath:
+            R_tr_mat = self.R_tr_mat
+        if "B" in metapath: 
+            B_tr_mat = self.B_tr_mat
+        if "P" in metapath:
+            P_tr_mat = self.P_tr_mat
+        if "I" in metapath:
+            I_tr_mat = self.I_tr_mat
+        if "R" in metapath:
+            R_tr_mat_trans = self.R_tr_mat.T
+        
 
         # return functions for metapath 
         if metapath == "AA":
@@ -70,6 +83,16 @@ class model():
             func = lambda X: (((X.dot(B_tr_mat)).dot(P_tr_mat)).dot(B_tr_mat.T)).dot(A_tr_mat_trans)
         elif metapath == "APBPA":
             func = lambda X: (((X.dot(P_tr_mat)).dot(B_tr_mat)).dot(P_tr_mat.T)).dot(A_tr_mat_trans)
+        elif metapath == "AIA":
+            func = lambda X: (X.dot(I_tr_mat)).dot(A_tr_mat_trans)
+        elif metapath == "ABPIPBA":
+            func = lambda X: ((((((X.dot(B_tr_mat)).dot(P_tr_mat))).dot(I_tr_mat)).dot(P_tr_mat.T)).dot(B_tr_mat.T)).dot(A_tr_mat_trans)
+        elif metapath == "ABIPIBA":
+            func = lambda X: ((((((X.dot(B_tr_mat)).dot(I_tr_mat))).dot(P_tr_mat)).dot(I_tr_mat.T)).dot(B_tr_mat.T)).dot(A_tr_mat_trans)
+        elif metapath == "RR":
+            func = lambda X: X.dot(R_tr_mat_trans)
+        elif metapath == "RBR":
+            func = lambda X: (X.dot(B_tr_mat)).dot(R_tr_mat_trans)
         else:
             raise NotImplementedError
         return func 
@@ -90,8 +113,8 @@ class model():
             print(mp)
             gram_train = kernel(X_train).toarray()
             gram_test = kernel(X_test).toarray()
-            pd.DataFrame(gram_train).to_csv(f'{self.output_path}/{self.type_A}_{mp}_train.csv', index=False)
-            pd.DataFrame(gram_test).to_csv(f'{self.output_path}/{self.type_A}_{mp}_test.csv', index=False)
+            pd.DataFrame(gram_train).to_csv(f'{self.output_path}/{mp}_{self.type_A}_train.csv', index=False)
+            pd.DataFrame(gram_test).to_csv(f'{self.output_path}/{mp}_{self.type_A}_test.csv', index=False)
             print(f'{mp} data saved')
 
     def choose_model(self, model_name):
@@ -171,7 +194,8 @@ class model():
             test_acc = model.score(test, self.y_test)
             train_acc = model.score(train, self.y_train)
             test_f1 = f1_score(self.y_test, model.predict(test))
-            print(f'Model: {m}    Train-Acc:{train_acc}    Test-Acc: {test_acc}     F1: {test_f1}')
+            tn, fp, fn, tp = confusion_matrix(self.y_test, model.predict(test)).ravel()
+            print(f'Model: {m}    Train-Acc:{train_acc}    Test-Acc: {test_acc}     F1: {test_f1}     TP: {tp}      TN: {tn}     FN: {fn}     FP:  {fp}')
 
     def _evaluate(self,metapaths,kernels):
         print(self.type_A)
@@ -179,8 +203,8 @@ class model():
         X_test = self.A_test_mat
         for mp, kernel in zip(metapaths, kernels):
             print(mp)
-            gram_train = pd.read_csv(f'{self.output_path}/{self.type_A}_{mp}_train.csv').values
-            gram_test = pd.read_csv(f'{self.output_path}/{self.type_A}_{mp}_test.csv').values
+            gram_train = pd.read_csv(f'{self.output_path}/{mp}_{self.type_A}_train.csv').values
+            gram_test = pd.read_csv(f'{self.output_path}/{mp}_{self.type_A}_test.csv').values
             self._clf_acc(gram_train,gram_test)
         print("DONE")
 

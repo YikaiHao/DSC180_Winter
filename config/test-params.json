@@ -1,14 +1,15 @@
 {
     "X_paths":[ 
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/A_train_reduced_pack.npz",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/A_test_reduced_pack.npz",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/B_train.npz",
-        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/P_train.npz"
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/A_10000_train.npz",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/A_10000_test.npz",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/B_10000_train.npz",
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/P_10000_train.npz", 
+        "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/tf-idf/I_10000_train.npz"
     ],
-    "type_list": ["A_train","A_test","B_train","P_train"],
+    "type_list": ["A_train","A_test","B_train","P_train","I_train"],
     "clf_lst":["svm", "rf","dt","gb"],
-    "type_A":"reduce_pack",
+    "type_A":"tfidf_10000",
     "y_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/feature/label.json",
-    "metapaths": ["AA","ABA","APA"],
+    "metapaths": ["AA","ABA","APA","APBPA","ABPBA","AIA","ABPIPBA"],
     "output_path": "/teams/DSC180A_FA20_A00/a04malware/personal-group2/new_data/model"
 }
