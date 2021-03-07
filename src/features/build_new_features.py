@@ -188,6 +188,71 @@ class matA():
         else:
             save_npz(f'{self.output}/A_train_reduced_api_name.npz', self.X_train)
             save_npz(f'{self.output}/A_test_reduced_api_name.npz', self.X_test)
+
+class matR():
+    """
+    Generate matrix R 
+    """
+    def __init__(self, output_path):
+        self.output = output_path
+        
+        # Load training and testing df 
+        self.train = pd.read_csv(f'{output_path}/preprocess_train.csv', usecols=['app_id', 'return_id'])
+        self.test = pd.read_csv(f'{output_path}/preprocess_test.csv', usecols=['app_id', 'return_id'])
+        
+        # load train/test y labels 
+        self.y_train = json.load(open(f'{output_path}label.json'))['y_train']
+        self.y_test = json.load(open(f'{output_path}label.json'))['y_train']
+        self._reset_id()
+        self._construct_csr_train_mat()
+        self._construct_csr_test_mat()
+        self._save_train_test()
+        #self.df 
+        #self.X_train
+        #self.X_test
+        
+    def _reset_id(self):
+        
+        # reset app id
+        self.train.loc[:,'app_id'] = reset_id(self.train['app_id'])
+
+            
+        # delete test api row if test api not in train
+        self.test = self.test[self.test['return_id'].isin(self.train['return_id'])]
+        self.test.loc[:,'app_id'] = reset_id(self.test['app_id'])
+
+        # reset id in train api_id 
+        unique_arr = np.unique(self.train['return_id'])
+        api_id_map = {val:ind for ind, val in enumerate(unique_arr)}
+
+        # map both train and test api_id
+        self.train.loc[:, 'return_id'] = self.train['return_id'].map(api_id_map)
+        self.test.loc[:, 'return_id'] = self.test['return_id'].map(api_id_map)
+            
+        
+    def _construct_csr_train_mat(self):
+        row = self.train.app_id.values
+        col = self.train.return_id.values
+        data = np.ones((len(row), ))
+        row_unique = np.unique(row)
+        col_unique = np.unique(col)
+        self.X_train = csr_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique)))
+        self.X_train = self.X_train.astype(bool).astype(int)
+
+        
+    def _construct_csr_test_mat(self):
+        row = self.test.app_id.values
+        col = self.test.return_id.values
+        data = np.ones((len(row), ))
+        row_unique = np.unique(row)
+        col_unique = np.unique(self.train.return_id.values)
+        self.X_test = csr_matrix((data, (row, col)), shape=(len(row_unique), len(col_unique)))
+        self.X_test = self.X_test.astype(bool).astype(int)
+        
+        
+    def _save_train_test(self): 
+        save_npz(f'{self.output}/R_train.npz', self.X_train)
+        save_npz(f'{self.output}/R_test.npz', self.X_test)
         
 class matB():
     """
@@ -235,6 +300,9 @@ def build_mat(paths, sample_size, type_lst, output_path, matlst):
     A_api = matA(output_path, pack=False, api=True)      
 
     print('A Finished')
+
+    if 'R' in matlst:
+        matR(output_path)
 
     if 'B' in matlst:
         matB(A)

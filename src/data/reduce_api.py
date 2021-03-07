@@ -17,30 +17,25 @@ class tfidf_reduce_api:
     def _load_data(self, path):
 
         # load malware, popular, and random csv 
-        self.malware_df = pd.read_csv(f'{path}malware.csv').iloc[:,1:]
-        self.popular_df = pd.read_csv(f'{path}popular-apps.csv').iloc[:,1:]
-        self.random_df = pd.read_csv(f'{path}random-apps.csv').iloc[:,1:]
+        self.malware_df = pd.read_csv(f'{path}malware.csv').iloc[:, 1:]
+        self.popular_df = pd.read_csv(f'{path}popular-apps.csv').iloc[:, 1:]
+        self.random_df = pd.read_csv(f'{path}random-apps.csv').iloc[:, 1:]
 
         print("Data Loaded")
+        
+        df_lst = [self.malware_df, self.popular_df, self.random_df]
 
-        # select the useful columns 
-        malware = self.malware_df[['api_id', 'app_id']]
-        popular = self.popular_df[['api_id', 'app_id']]
-        random = self.random_df[['api_id', 'app_id']]
-
-        # get api columns 
-        malware_api = malware.groupby('app_id').agg(list)['api_id']
-        popular_api = popular.groupby('app_id').agg(list)['api_id']
-        random_api = random.groupby('app_id').agg(list)['api_id']
-
-        def generate_corpus(api_series):
+        def generate_corpus(df_lst):
             corpus_lst = []
-            for api in api_series:
-                for i in api:
-                    corpus_lst.append(' '.join(['api' + str(j) for j in i]))
+            for df in df_lst:
+                # combine api package and api name 
+                df['api'] = 'pack' + df['package_id'].astype(str)+ 'api' + df['api_id'].astype(str)
+                api_lst = df.groupby('app_id').agg(list)['api']
+                for i in api_lst:
+                    corpus_lst.append(' '.join(i))
             return corpus_lst
 
-        self.corpus_lst = generate_corpus([malware_api, random_api, popular_api])
+        self.corpus_lst = generate_corpus(df_lst)
 
         print("Corpus Created")
 
@@ -55,20 +50,17 @@ class tfidf_reduce_api:
         df = pd.DataFrame(np.mean(tfIdf, axis=0).tolist()[0], index=tfIdfVectorizer.get_feature_names(), columns=['tfidf'])
 
         # sort by tfidf 
-        df = df.sort_values('tfidf', ascending=False)
+        self.df = df.sort_values('tfidf', ascending=False)
 
         # save the top #num of apis
-        api_lst = df.head(num_apis).index.tolist()
-
-        # remove the 'api' string 
-        self.api_lst_num = [int(i[3:]) for i in api_lst]
+        self.api_lst = self.df.head(num_apis).index.tolist()
 
         print("Top Api List Created")
 
     def _save_reduce_api_csv(self, output_path, num_apis):
-        malware_top = self.malware_df[self.malware_df.api_id.isin(self.api_lst_num )]
-        popular_top = self.popular_df[self.popular_df.api_id.isin(self.api_lst_num )]
-        random_top = self.random_df[self.random_df.api_id.isin(self.api_lst_num )]
+        malware_top = self.malware_df[self.malware_df.api.isin(self.api_lst)]
+        popular_top = self.popular_df[self.popular_df.api.isin(self.api_lst)]
+        random_top = self.random_df[self.random_df.api.isin(self.api_lst)]
 
         malware_top.to_csv(f'{output_path}malware_tfidf_{num_apis}.csv')
         popular_top.to_csv(f'{output_path}popular_tfidf_{num_apis}.csv')
@@ -78,7 +70,6 @@ class tfidf_reduce_api:
 
 def run_reduce_api(path, num_apis, output_path):
     tfidf_reduce_api(path, num_apis, output_path)
-
 
 
 
