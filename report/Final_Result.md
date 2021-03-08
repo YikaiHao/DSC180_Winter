@@ -10,16 +10,16 @@ The data source is called Android Malware Dataset (AMD). The dataset is publishe
 
 ### Smali 
 In order to analyze the smali files, we should understand the structure of it. Therefore, here is the description of the smali files and the features contained in the smali files.
-![smali_example](data/report/smali.png)
+![smali_example](./data/report/smali.png)
 
 
 ### API Calls
 In order to understand which part of the smali files do the malicious action, we put our attention on API (Application Programming Interface) calls. There are four main components in an API call.
-![api_call](data/report/API_explain.png)
+![api_call](./data/report/API_explain.png)
 
 ### Database 
 We design a new database for storing data.
-![database](data/report/database_new.png)
+![database](./data/report/database_new.png)
 
 ### Data Statistics
 After picking out the features we want, we do some simple analysis based on the data we have. As the table shows, the size difference between malwares and benigns are huge. In addition, the unique api calls in benigns are about 10 times larger than malwares. Therefore, the difference between malwares and benigns do exists and we are able to find some way to detect malwares.
