@@ -10,16 +10,16 @@ The data source is called Android Malware Dataset (AMD). The dataset is publishe
 
 ### Smali 
 In order to analyze the smali files, we should understand the structure of it. Therefore, here is the description of the smali files and the features contained in the smali files.
-![smali_example](img/smali_file.png)
+![smali_example](data/report/smali.png)
 
 
 ### API Calls
 In order to understand which part of the smali files do the malicious action, we put our attention on API (Application Programming Interface) calls. There are four main components in an API call.
-![api_call](img/API.png)
+![api_call](data/report/API_explain.png)
 
 ### Database 
 We design a new database for storing data.
-![database](img/database.png)
+![database](data/report/database_new.png)
 
 ### Data Statistics
 After picking out the features we want, we do some simple analysis based on the data we have. As the table shows, the size difference between malwares and benigns are huge. In addition, the unique api calls in benigns are about 10 times larger than malwares. Therefore, the difference between malwares and benigns do exists and we are able to find some way to detect malwares.
@@ -41,7 +41,7 @@ In order to check whether the features we generate are useful for checking malwa
 
 As we can see from the graphs, the distribution of every application type for every feature is different.
 
-![log_scale](img/log_scale.png)
+![log_scale](data/report/log_scale.png)
 
 ### Hindroid 
 HinDroid is the baseline model we use for our report. It contains different types of kernels and the meaning behind each kernel is different. It uses the features we extract from the data generating process to build some matrices. Each matrix shows a type of relationship between apis or applications. Each matrix is an adjacent matrix for a graph with a specialized relationship. By choosing different types of matrices we want to combine together, we get the kernel we have. Then we will be able to use the custom kernels and put in different classifiers like SVM or Random Forest for malware detection. 
@@ -95,7 +95,7 @@ After finishing the sentence generating process, we will implement the genism’
 
 We use data visualization to check if our model makes sense. Our plot shows the vector embeddings after the dimension reduction using a method called t-SNE(t-distributed stochastic neighbor embedding). This method can project a high dimensional vector into a two dimensional space. t-SNE uses Barnes-Huts approximations to reduce the dimensions. As the graph shown below, the distribution of malwares and benigns are separated. Benigns are condensed at the left side with small x and y values. However, malwares are distributed at the right side, with a large x value and widespread y value. From the information on the graph, the model can detect malwares well. Although a few points are mixed in the graph, they might be separable in higher dimensions.
 
-![word2vec](img/word2vec.png)
+![word2vec](data/report/word2vec_AA_vec10_tok10_sen50000.png)
 
 ### Node2Vec
 
@@ -105,11 +105,11 @@ We use all A, B, and P matrices to build our Node2Vec. Since the B and P matrice
 
 For the probability of random walks, there are three types of probability. For example,from the graph below, we have a path from t -> v. When choosing the next step for v, we have three different probabilities. If we get from v -> t, we have a probability of 1/p. In addition, if the next node from v has a connection with t, then the probability of the node will be 1. Other nodes will have a probability with 1/q. We then implement sentences into the genism’s Node2Vec model. The p value we select in our Node2Vec is 1 and the q value we select is 1/2. We choose a larger p value since we do not want our path going back to its previous node.
 
-![node2vec_rule](img/nod2vec_rule.png)
+![node2vec_rule](data/report/node2vec_formula.png)
 
 Similar to Word2Vec, we also plot out the vector embeddings after finishing the dimension reduction. The plot we get is shown below:
 
-![node2vec](img/nod2vec.png)
+![node2vec](data/report/node2vec_AA_vec200_tok20_sen50000.png)
 
 ### Metapath2Vec
 
@@ -117,9 +117,9 @@ Methpath2Vec is an extension of Node2Vec on heterogeneous graphs. The difference
 
 We then implement sentences into the genism’s Word2Vec model. After the dimension reduction process is done, the embedding plot is shown figure below:
 
-![equation](img/equation.png)
+![equation](data/report/equation.png)
 
-![metapath2vec](img/mepath2vec.png)
+![metapath2vec](data/report/metapath2vec_ABA_vec200_tok10_sen50000.png)
 
 
 ## Result 
